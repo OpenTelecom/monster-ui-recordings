@@ -10,8 +10,6 @@ define(function(require) {
         css: [ 'app' ],
 
         settings: {
-            'appId': 'YOUR_APP_ID',
-            'roleArn': 'YOUR_ROLE_ARN',
             'key': 'AKIAJR52NDF2XDN3ZUFQ',
             'secret': '2hZCLuSz3RQK1jY002wxRknWSQY/WJJdpTILn5m5',
             'bucketName': 'callrecordingtestforcanddi',
@@ -43,13 +41,22 @@ define(function(require) {
         initApp: function(callback) {
             var self = this;
 
+            AWS.config.update({
+                region: self.settings.bucketRegion,
+                version: self.settings.version,
+                accessKeyId: self.settings.key,
+                secretAccessKey: self.settings.secret
+            });
+
+            AWS.config.region = self.settings.bucketRegion;
+            // AWS.config.update({region: 'us-east-1'});
+
             // Used to init the auth token and account id of this app
             monster.pub('auth.initApp', {
                 app: self,
                 callback: callback
             });
         },
-
 
         // Entry Point of the app
         render: function(container) {
@@ -73,34 +80,44 @@ define(function(require) {
         renderIndex: function(pArgs) {
             var self = this,
                 args = pArgs || {},
-                parent = args.container || $('#recordings_app_container .app-content-wrapper'),
-                template = $(monster.template(self, 'layout', { user: monster.apps.auth.currentUser }));
+                $parent = args.container || $('#recordings_app_container .app-content-wrapper');
 
-            parent
-                .fadeOut(function() {
-                    $(this)
-                        .empty()
-                        .append(template)
-                        .fadeIn();
-                });
+            var template = $(monster.template(self, 'layout', {
+                user: monster.apps.auth.currentUser
+            }));
 
+            $parent.fadeOut(function() {
+                $(this).empty()
+                    .append(template)
+                    .fadeIn();
+            });
 
-        },
-        _renderRecordingsList: function(){
-            bucket.listObjects({
-                Prefix: prefix
-            }, function (err, data) {
-                if (err) {
-                    results.innerHTML = 'ERROR: ' + err;
-                } else {
-                    var objKeys = "";
-                    data.Contents.forEach(function (obj) {
-                        objKeys += obj.Key + "<br>";
-                    });
-                    results.innerHTML = objKeys;
+            var bucket = new AWS.S3({
+                params: {
+                    Bucket: self.settings.bucketName
                 }
             });
+
+            var $container = $('#recording-list');
+            self._renderRecordingsList(bucket, $container);
         },
+
+        _renderRecordingsList: function(bucket, $container){
+            bucket.listObjects({
+                //Prefix: prefix
+            }, function (err, data) {
+                if (err) {
+                    console.log('ERROR: ' + err);
+                } else {
+                    console.log(data);
+                    var $list = $('<ul></ul>').appendTo($container);
+
+                    data.Contents.forEach(function (obj) {
+                        $('<li>' + obj.Key + '</li>').appendTo($list);
+                    });
+                }
+            });
+        }/*,
         _putObjects: function() {
             bucket.putObject(params, function (err, data) {
              if (err) {
@@ -109,7 +126,7 @@ define(function(require) {
                 listObjs();
              }
              });
-        }
+        }*/
     };
 
     return app;
