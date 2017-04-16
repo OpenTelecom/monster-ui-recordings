@@ -1,0 +1,6 @@
+{
+	"recordings": {
+		"description": "Vous pouvez changer le template HTML situé dans /apps/recordings/views/layout.html. Le Javascript nécessaire à cette application se situe dans /apps/recordings/app.js.",
+		"welcome": "Bienvenue {{variable}} dans notre exemple d'application!"
+	}
+}
