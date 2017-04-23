@@ -1,0 +1,38 @@
+{
+	"name": "recordings",
+	"i18n": {
+		"ru-RU": {
+			"label": "Recordings",
+			"description": "Приложение, позволяющее следить за записями."
+		},
+		"en-US": {
+			"label": "Recordings",
+			"description": "Recordings allows you to monitor the recordings."
+		},
+		"en-EN": {
+			"label": "Recordings",
+			"description": "Recordings allows you to monitor the recordings."
+		}
+	},
+	"tags": [
+		"reseller"
+	],
+	"icon": "recordings.png",
+	"api_url": "",
+	"author": "SIPLABS LLC",
+	"version": "1.0",
+	"license": "-",
+	"price": 0,
+	"screenshots": [
+		"recordings1.png",
+		"recordings2.png",
+		"recordings3.png",
+		"recordings4.png",
+		"recordings5.png"
+	],
+	"urls": {
+		"documentation": "{documentation_url}",
+		"howto": "{howto_video_url}"
+	},
+	"pvt_type": "app"
+}

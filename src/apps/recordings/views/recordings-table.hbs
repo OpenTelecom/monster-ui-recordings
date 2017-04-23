@@ -1,0 +1,26 @@
+<table id="recordings-list" data-sorting="true" data-paging="true">
+	<thead>
+		<tr>
+			<th>№</th>
+			<th>Name</th>
+			<th>Last Modified</th>
+			<th data-type="html" data-sort-use="text">Player</th>
+			<th data-type="html" data-sort-use="text">Download</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{#each this.files}}
+		<tr>
+			<td>{{@index}}</td>
+			<td>{{Key}}</td>
+			<td>{{LastModified}}</td>
+			<td>
+				<a class="js-play-audio" href="{{url}}">Play</a>
+			</td>
+			<td>
+				<a href="{{url}}" download="">Download</a>
+			</td>
+		</tr>
+	{{/each}}
+	</tbody>
+</table>
