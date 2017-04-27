@@ -3,8 +3,7 @@ define(function(require) {
 		_ = require('underscore'),
 		monster = require('monster'),
 		Handlebars = require('handlebars'),
-		footable = require('footable'),/*,
-		AWS = require('aws-sdk'),*/
+		footable = require('footable'),
 		RemoteStorage = require('remote-storage-adapter');
 
 	var app = {
@@ -80,12 +79,6 @@ define(function(require) {
 				args = pArgs || {},
 				$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
 
-			console.log('RemoteStorage in app');
-			console.log(RemoteStorage);
-
-			console.log('AWS in app');
-			console.log(window.AWS);
-
 			RemoteStorage.init('aws', self.settings.aws);
 
 			var template = $(monster.template(self, 'layout', {
@@ -99,10 +92,11 @@ define(function(require) {
 			});
 
 			self._renderRecordingsList($appContainer);
-			//self._renderCDRs($cdrsContainer);
+			self._renderCDRs($appContainer);
 		},
 
-		_renderCDRs: function() {
+		_renderCDRs: function($appContainer) {
+			console.log('render CDRs');
 			var self = this;
 
 			self.callApi({
@@ -112,12 +106,61 @@ define(function(require) {
 				},
 				success: function(data, status) {
 					//_callback(data.data, uiRestrictions);
+					console.log('get cdrs success data');
+					console.log(data);
+					var cdrs = data.data;
+
+					if(cdrs.length === 0) {
+						console.log('Warning: No CDRs');
+						return;
+					}
+					self._renderCDRsTable(cdrs, $appContainer);
 				},
 				error: function(data, status) {
 					//_callback({}, uiRestrictions);
+					console.log('get cdrs error data');
+					console.log(data);
 				}
 			});
 		},
+
+		_renderCDRsTable: function(cdrsArr, $appContainer) {
+			/*
+			authorizing_id: "acdc5afcc85e9540617ac3713dc0c535"
+			billing_seconds: "6"
+			bridge_id:"a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
+			call_id: "a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
+			call_priority: ""
+			call_type: ""
+			callee_id_name: ""
+			callee_id_number: ""
+			caller_id_name: "userm3twjey5f5"
+			caller_id_number: "user_m3twjey5f5"
+			calling_from: "user_m3twjey5f5"
+			cost:"0"
+			datetime: "2017-04-27 06:19:58"
+			dialed_number: "3000"
+			direction: "inbound"
+			duration_seconds: "6"
+			from: "user_m3twjey5f5@vbarkasov.tvnow.io"
+			hangup_cause: "NORMAL_CLEARING"
+			id: "201704-a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
+			*/
+
+			$.get('apps/recordings/views/cdrs-table.hbs', function (data) {
+				var template = Handlebars.compile(data);
+				console.log(template);
+
+				$appContainer.find('#cdrs-list-container').html(template({
+					'cdrs': cdrsArr
+				}));
+
+				$('table#cdrs-list').footable({}, function(ft) {
+					console.log('cdrs table renderings complete');
+				});
+			});
+		},
+
 
 		_renderRecordingsList: function($appContainer) {
 			var self = this;
@@ -129,30 +172,6 @@ define(function(require) {
 					return;
 				}
 
-				/*var files = bucketContent.Contents.filter(function(file) {
-					return file.Size > 0;
-				});
-
-				var template = $(monster.template(self, 'recordings-table', {
-					'files': files
-				}));
-
-				$container.html(template);
-
-				$('table#recordings').footable({}, function(ft) {
-					$('.js-play-audio').click(function(e) {
-						e.preventDefault();
-						var $btn = $(this);
-						var $btnContainer = $btn.parent();
-
-						$btnContainer.html(
-							'<audio controls="controls" preload="auto" autoplay="autoplay">' +
-							'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
-							'</audio>'
-						);
-					});
-				});*/
-
 				$.get('apps/recordings/views/recordings-table.hbs', function (data) {
 					console.log('compile template');
 					var template = Handlebars.compile(data);
@@ -162,13 +181,9 @@ define(function(require) {
 						return file.Size > 0;
 					});
 
-					debugger;
-
 					$appContainer.find('#recordings-list-container').html(template({
 						'files': files
 					}));
-
-
 
 					$('table#recordings-list').footable({}, function(ft) {
 						$('.js-play-audio').click(function(e) {

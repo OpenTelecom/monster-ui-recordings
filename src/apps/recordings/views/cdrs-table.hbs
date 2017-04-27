@@ -1,0 +1,26 @@
+<table id="cdrs-list" data-sorting="true" data-paging="true">
+	<thead>
+		<tr>
+			<th>№</th>
+			<th>Direction</th>
+			<th>Caller ID Name</th>
+			<th>Datetime</th>
+			<th>Dialed Number</th>
+			<th>Duration (sec)</th>
+			<th>From</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{#each this.cdrs}}
+		<tr>
+			<td>{{@index}}</td>
+			<td>{{direction}}</td>
+			<td>{{caller_id_name}}</td>
+			<td>{{datetime}}</td>
+			<td>{{dialed_number}}</td>
+			<td>{{duration_seconds}}</td>
+			<td>{{from}}</td>
+		</tr>
+	{{/each}}
+	</tbody>
+</table>
