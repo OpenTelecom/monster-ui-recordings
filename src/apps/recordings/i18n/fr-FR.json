@@ -1,6 +1,29 @@
 {
 	"recordings": {
-		"description": "Vous pouvez changer le template HTML situé dans /apps/recordings/views/layout.html. Le Javascript nécessaire à cette application se situe dans /apps/recordings/app.js.",
-		"welcome": "Bienvenue {{variable}} dans notre exemple d'application!"
+		"title": "Recordings",
+		"description": "Feel free to update the HTML template located in /apps/recordings/views/layout.html. The Javascript to manage this app is located in /apps/recordings/app.js.",
+		"welcome": "Welcome {{variable}} to the Recordings App",
+		"recordingsTable": {
+			"title": "Recordings",
+			"columnHeader": {
+				"name": "Name",
+				"lastModified": "Last Modified",
+				"play": "Play",
+				"download": "Download"
+			},
+			"playBtnText": "Play",
+			"downloadBtnText": "Download"
+		},
+		"cdrsTable": {
+			"title": "CDRs",
+			"columnHeader": {
+				"direction": "Direction",
+				"callerIdName": "Caller ID Name",
+				"datetime": "Datetime",
+				"dialerNumber": "Dialer Number",
+				"duration": "Duration (sec)",
+				"from": "From"
+			}
+		}
 	}
 }

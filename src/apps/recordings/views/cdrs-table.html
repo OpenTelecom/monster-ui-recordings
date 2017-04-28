@@ -1,0 +1,27 @@
+<h2>{{i18n.recordings.cdrsTable.title}}</h2>
+<table id="cdrs-list" data-sorting="true">
+	<thead>
+		<tr>
+			<th>№</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.direction}}</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.callerIdName}}</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.datetime}}</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.dialerNumber}}</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.duration}}</th>
+			<th>{{i18n.recordings.cdrsTable.columnHeader.from}}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{#each this.cdrs}}
+		<tr>
+			<td>{{inc @index}}</td>
+			<td>{{direction}}</td>
+			<td>{{caller_id_name}}</td>
+			<td>{{datetime}}</td>
+			<td>{{dialed_number}}</td>
+			<td>{{duration_seconds}}</td>
+			<td>{{from}}</td>
+		</tr>
+	{{/each}}
+	</tbody>
+</table>

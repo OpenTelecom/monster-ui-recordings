@@ -45,6 +45,8 @@ define(function(require) {
 		initApp: function(callback) {
 			var self = this;
 
+			self._initHandlebarsHelpers();
+
 			// Used to init the auth token and account id of this app
 			monster.pub('auth.initApp', {
 				app: self,
@@ -125,6 +127,7 @@ define(function(require) {
 		},
 
 		_renderCDRsTable: function(cdrsArr, $appContainer) {
+			var self = this;
 			/*
 			authorizing_id: "acdc5afcc85e9540617ac3713dc0c535"
 			billing_seconds: "6"
@@ -147,20 +150,21 @@ define(function(require) {
 			id: "201704-a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
 			*/
 
-			$.get('apps/recordings/views/cdrs-table.hbs', function (data) {
-				var template = Handlebars.compile(data);
-				console.log(template);
+			var template = $(monster.template(self, 'cdrs-table', {
+				'cdrs': cdrsArr
+			}));
 
-				$appContainer.find('#cdrs-list-container').html(template({
-					'cdrs': cdrsArr
-				}));
+			$appContainer.find('#cdrs-list-container').html(template);
 
-				$('table#cdrs-list').footable({}, function(ft) {
-					console.log('cdrs table renderings complete');
-				});
+			$('table#cdrs-list').footable({
+				'paging': {
+					'enabled': true,
+					'size': 6
+				}
+			}, function(ft) {
+				console.log('cdrs table renderings complete');
 			});
 		},
-
 
 		_renderRecordingsList: function($appContainer) {
 			var self = this;
@@ -172,35 +176,42 @@ define(function(require) {
 					return;
 				}
 
-				$.get('apps/recordings/views/recordings-table.hbs', function (data) {
-					console.log('compile template');
-					var template = Handlebars.compile(data);
-					console.log(template);
+				var files = bucketContent.Contents.filter(function(file) {
+					return file.Size > 0;
+				});
 
-					var files = bucketContent.Contents.filter(function(file) {
-						return file.Size > 0;
+				var template = $(monster.template(self, 'recordings-table', {
+					'files': files
+				}));
+
+				console.log(template);
+
+				$appContainer.find('#recordings-list-container').html(template);
+
+				$('table#recordings-list').footable({
+					'paging': {
+						'enabled': true,
+						'size': 2
+					}
+				}, function(ft) {
+					$('.js-play-audio').click(function(e) {
+						e.preventDefault();
+						var $btn = $(this);
+						var $btnContainer = $btn.parent();
+
+						$btnContainer.html(
+							'<audio controls="controls" preload="auto" autoplay="autoplay">' +
+							'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
+							'</audio>'
+						);
 					});
+				});
+			});
+		},
 
-					$appContainer.find('#recordings-list-container').html(template({
-						'files': files
-					}));
-
-					$('table#recordings-list').footable({}, function(ft) {
-						$('.js-play-audio').click(function(e) {
-							e.preventDefault();
-							var $btn = $(this);
-							var $btnContainer = $btn.parent();
-
-							$btnContainer.html(
-								'<audio controls="controls" preload="auto" autoplay="autoplay">' +
-									'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
-								'</audio>'
-							);
-						});
-					});
-
-
-				}, 'html');
+		_initHandlebarsHelpers: function() {
+			Handlebars.registerHelper('inc', function(value, options) {
+				return parseInt(value) + 1;
 			});
 		}
 	};

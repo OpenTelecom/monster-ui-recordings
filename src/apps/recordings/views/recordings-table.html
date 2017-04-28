@@ -1,0 +1,27 @@
+<h2>{{i18n.recordings.recordingsTable.title}}</h2>
+<table id="recordings-list" data-sorting="true">
+	<thead>
+		<tr>
+			<th>№</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.name}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.lastModified}}</th>
+			<th data-type="html" data-sort-use="text">{{i18n.recordings.recordingsTable.columnHeader.play}}</th>
+			<th data-type="html" data-sort-use="text">{{i18n.recordings.recordingsTable.columnHeader.download}}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{#each this.files}}
+		<tr>
+			<td>{{inc @index}}</td>
+			<td>{{Key}}</td>
+			<td>{{LastModified}}</td>
+			<td>
+				<a class="js-play-audio" href="{{url}}">{{../i18n.recordings.recordingsTable.playBtnText}}</a>
+			</td>
+			<td>
+				<a href="{{url}}" download="">{{../i18n.recordings.recordingsTable.downloadBtnText}}</a>
+			</td>
+		</tr>
+	{{/each}}
+	</tbody>
+</table>

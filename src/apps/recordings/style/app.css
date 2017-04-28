@@ -1,0 +1,36 @@
+#recordings_wrapper table {
+	background: white;
+}
+
+#recordings_wrapper table th,
+#recordings_wrapper table td {
+	border: 1px solid #ccc;
+}
+
+#recordings_wrapper table td {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+#recordings_wrapper table thead tr {
+	background: #e8e8e8;
+}
+
+#recordings_wrapper table tbody tr:nth-child(even) {
+	background-color: #eee;
+}
+
+#recordings_wrapper tfoot tr.footable-paging {
+	background: #f5f5f5;
+}
+
+#recordings_wrapper tfoot tr.footable-paging td {
+	border: none;
+}
+
+#recordings_wrapper table .footable-paging .label {
+	background: #f5f5f5;
+	color: #848484;
+	text-shadow: none;
+	font-weight: normal;
+}
