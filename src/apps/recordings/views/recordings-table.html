@@ -14,12 +14,16 @@
 		<tr>
 			<td>{{inc @index}}</td>
 			<td>{{Key}}</td>
-			<td>{{LastModified}}</td>
+			<td>{{toFriendlyDate LastModified}}</td>
 			<td>
-				<a class="js-play-audio" href="{{url}}">{{../i18n.recordings.recordingsTable.playBtnText}}</a>
+				<div class="btn-wrapper">
+					<a class="js-play-audio play-btn" href="{{url}}"></a>
+				</div>
 			</td>
 			<td>
-				<a href="{{url}}" download="">{{../i18n.recordings.recordingsTable.downloadBtnText}}</a>
+				<div class="btn-wrapper">
+					<a class="download-btn" href="{{url}}" download=""></a>
+				</div>
 			</td>
 		</tr>
 	{{/each}}

@@ -34,3 +34,115 @@
 	text-shadow: none;
 	font-weight: normal;
 }
+
+#recordings_wrapper table td audio {
+	width: 100px;
+}
+
+#recordings_wrapper table td .btn-wrapper {
+	padding-top: 5px;
+	text-align: center;
+}
+
+.play-btn {
+	display: inline-block;
+	width: 26px;
+	height: 26px;
+	background: #333;
+	border: none;
+	border-radius: 100%;
+	margin: auto;
+	cursor: pointer;
+}
+
+.play-btn::after {
+	content: '';
+	display: inline-block;
+	position: relative;
+	top: 8px;
+	left: 1px;
+	vertical-align: top;
+	border-style: solid;
+	border-width: 5px 0 5px 10px;
+	border-color: transparent transparent transparent white;
+}
+
+.download-btn {
+	display: inline-block;
+	position: relative;
+	padding: 13px 13px;
+	background-color: #333;
+	color: white;
+	font-family: sans-serif;
+	text-decoration: none;
+	font-size: 0.9em;
+	text-align: center;
+	text-indent: 15px;
+}
+
+.download-btn:hover {
+	background-color: #333;
+	color: white;
+}
+
+.download-btn:before, .download-btn:after {
+	content: ' ';
+	display: block;
+	position: absolute;
+	left: 6px;
+	top: 52%;
+}
+
+/* download box */
+.download-btn:before {
+	width: 10px;
+	height: 2px;
+	border-style: solid;
+	border-width: 0 2px 2px;
+}
+
+/* download arrow */
+.download-btn:after {
+	width: 0;
+	height: 0;
+	margin-left: 3px;
+	margin-top: -7px;
+
+	border-style: solid;
+	border-width: 4px 4px 0 4px;
+	border-color: transparent;
+	border-top-color: inherit;
+
+	animation: downloadArrow 2s linear infinite;
+	animation-play-state: paused;
+}
+
+.download-btn:hover:before {
+	border-color: white;
+}
+
+.download-btn:hover:after {
+	border-top-color: white;
+	animation-play-state: running;
+}
+
+@keyframes downloadArrow {
+	0% {
+		margin-top: -7px;
+		opacity: 1;
+	}
+
+	0.001% {
+		margin-top: -15px;
+		opacity: 0;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		margin-top: 0;
+		opacity: 0;
+	}
+}
