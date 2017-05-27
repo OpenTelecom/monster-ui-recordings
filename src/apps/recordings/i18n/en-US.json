@@ -6,24 +6,17 @@
 		"recordingsTable": {
 			"title": "Recordings",
 			"columnHeader": {
-				"name": "Name",
-				"lastModified": "Last Modified",
-				"play": "Play",
-				"download": "Download"
-			},
-			"playBtnText": "Play",
-			"downloadBtnText": "Download"
-		},
-		"cdrsTable": {
-			"title": "CDRs",
-			"columnHeader": {
 				"direction": "Direction",
 				"callerIdName": "Caller ID Name",
 				"datetime": "Datetime",
 				"dialerNumber": "Dialer Number",
 				"duration": "Duration (sec)",
-				"from": "From"
-			}
+				"from": "From",
+				"play": "Play",
+				"download": "Download"
+			},
+			"playBtnText": "Play",
+			"downloadBtnText": "Download"
 		}
 	}
 }

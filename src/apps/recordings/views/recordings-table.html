@@ -3,26 +3,38 @@
 	<thead>
 		<tr>
 			<th>№</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.name}}</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.lastModified}}</th>
-			<th data-type="html" data-sort-use="text">{{i18n.recordings.recordingsTable.columnHeader.play}}</th>
-			<th data-type="html" data-sort-use="text">{{i18n.recordings.recordingsTable.columnHeader.download}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.direction}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>
+			<th data-type="html" data-sort-use="text">
+				{{i18n.recordings.recordingsTable.columnHeader.play}}
+			</th>
+			<th data-type="html" data-sort-use="text">
+				{{i18n.recordings.recordingsTable.columnHeader.download}}
+			</th>
 		</tr>
 	</thead>
 	<tbody>
-	{{#each this.files}}
+	{{#each this.recordings}}
 		<tr>
 			<td>{{inc @index}}</td>
-			<td>{{Key}}</td>
-			<td>{{toFriendlyDate LastModified}}</td>
+			<td>{{direction}}</td>
+			<td>{{caller_id_name}}</td>
+			<td>{{datetime}}</td>
+			<td>{{dialed_number}}</td>
+			<td>{{duration_seconds}}</td>
+			<td>{{from}}</td>
 			<td>
 				<div class="btn-wrapper">
-					<a class="js-play-audio play-btn" href="{{url}}"></a>
+					<a class="js-play-audio play-btn" href="{{recording_url}}"></a>
 				</div>
 			</td>
 			<td>
 				<div class="btn-wrapper">
-					<a class="download-btn" href="{{url}}" download=""></a>
+					<a class="download-btn" href="{{recording_url}}" download=""></a>
 				</div>
 			</td>
 		</tr>

@@ -18,7 +18,8 @@ define(function(require) {
 				'bucketName': 'callrecordingtestforcanddi',
 				'bucketRegion': 'eu-west-2',
 				'version': 'latest'
-			}
+			},
+			filenameTemplate: 'call_recording_{{call_id}}.mp3'
 		},
 
 		i18n: {
@@ -94,11 +95,10 @@ define(function(require) {
 			});
 
 			self._renderRecordingsList($appContainer);
-			self._renderCDRs($appContainer);
 		},
 
-		_renderCDRs: function($appContainer) {
-			console.log('render CDRs');
+		_getCDRs: function(callback) {
+			console.log('Get CDRs');
 			var self = this;
 
 			self.callApi({
@@ -107,8 +107,7 @@ define(function(require) {
 					accountId: self.accountId
 				},
 				success: function(data, status) {
-					//_callback(data.data, uiRestrictions);
-					console.log('get cdrs success data');
+					console.log('CDRs data:');
 					console.log(data);
 					var cdrs = data.data;
 
@@ -116,53 +115,16 @@ define(function(require) {
 						console.log('Warning: No CDRs');
 						return;
 					}
-					self._renderCDRsTable(cdrs, $appContainer);
+
+					if(typeof(callback) === 'function') {
+						callback(cdrs);
+					}
 				},
 				error: function(data, status) {
 					//_callback({}, uiRestrictions);
 					console.log('get cdrs error data');
 					console.log(data);
 				}
-			});
-		},
-
-		_renderCDRsTable: function(cdrsArr, $appContainer) {
-			var self = this;
-			/*
-			authorizing_id: "acdc5afcc85e9540617ac3713dc0c535"
-			billing_seconds: "6"
-			bridge_id:"a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
-			call_id: "a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
-			call_priority: ""
-			call_type: ""
-			callee_id_name: ""
-			callee_id_number: ""
-			caller_id_name: "userm3twjey5f5"
-			caller_id_number: "user_m3twjey5f5"
-			calling_from: "user_m3twjey5f5"
-			cost:"0"
-			datetime: "2017-04-27 06:19:58"
-			dialed_number: "3000"
-			direction: "inbound"
-			duration_seconds: "6"
-			from: "user_m3twjey5f5@vbarkasov.tvnow.io"
-			hangup_cause: "NORMAL_CLEARING"
-			id: "201704-a8326999634f059d31243f4e8f5b1824@0:0:0:0:0:0:0:0"
-			*/
-
-			var template = $(monster.template(self, 'cdrs-table', {
-				'cdrs': cdrsArr
-			}));
-
-			$appContainer.find('#cdrs-list-container').html(template);
-
-			$('table#cdrs-list').footable({
-				'paging': {
-					'enabled': true,
-					'size': 6
-				}
-			}, function(ft) {
-				console.log('cdrs table renderings complete');
 			});
 		},
 
@@ -180,31 +142,57 @@ define(function(require) {
 					return file.Size > 0;
 				});
 
-				var template = $(monster.template(self, 'recordings-table', {
-					'files': files
-				}));
+				self._getCDRs(function(cdrs){
+					var callId,
+						desiredFilename,
+						CDRsWithFilesArr = [];
 
-				console.log(template);
-
-				$appContainer.find('#recordings-list-container').html(template);
-
-				$('table#recordings-list').footable({
-					'paging': {
-						'enabled': true,
-						'size': 2
+					for(var ci=0, clen=cdrs.length; ci < clen; ci++) {
+						callId = cdrs[ci].call_id;
+						for(var fi=0, flen=files.length; fi < flen; fi++) {
+							desiredFilename = self.settings.filenameTemplate.replace('{{call_id}}', callId);
+							if(files[fi].Key === desiredFilename) {
+								cdrs[ci].recording_url = files[fi].url;
+								CDRsWithFilesArr.push(cdrs[ci]);
+								break;
+							}
+						}
 					}
-				}, function(ft) {
-					$('.js-play-audio').click(function(e) {
-						e.preventDefault();
-						var $btn = $(this);
-						var $btnContainer = $btn.parent();
 
-						$btnContainer.html(
-							'<audio controls="controls" preload="auto" autoplay="autoplay">' +
-							'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
-							'</audio>'
-						);
-					});
+					console.log('CDRs with Files:');
+					console.log(CDRsWithFilesArr);
+
+
+					var template = $(monster.template(self, 'recordings-table', {
+						'recordings': CDRsWithFilesArr
+					}));
+
+					console.log(template);
+
+					$appContainer.find('#recordings-list-container').html(template);
+
+					self._initRecordingsTableBehavior();
+				});
+			});
+		},
+
+		_initRecordingsTableBehavior: function() {
+			$('table#recordings-list').footable({
+				'paging': {
+					'enabled': true,
+					'size': 10
+				}
+			}, function(ft) {
+				$('.js-play-audio').click(function(e) {
+					e.preventDefault();
+					var $btn = $(this);
+					var $btnContainer = $btn.parent();
+
+					$btnContainer.html(
+						'<audio controls="controls" preload="auto" autoplay="autoplay">' +
+						'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
+						'</audio>'
+					);
 				});
 			});
 		},
