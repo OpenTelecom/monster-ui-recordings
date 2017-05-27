@@ -60,12 +60,12 @@ define(function(require) {
 					var bucketBaseUrl = baseUrl + AWSadapter.settings.bucketName;
 					console.log(baseUrl + AWSadapter.settings.bucketName);
 
-					bucketContent.Contents.forEach(function(file, i, arr) {
+					/*bucketContent.Contents.forEach(function(file, i, arr) {
 						//bucketContent.Contents[i]['url'] = bucketBaseUrl + '/' + file.Key;
 						if(file.Size > 0) {
 							file['url'] = (bucketBaseUrl + '/' + file.Key).replace(/\s/g, '+');
 						}
-					});
+					});*/
 
 					// https://s3.eu-west-2.amazonaws.com/callrecordingtestforcanddi/recordings/gon-gon song - short.mp3
 
@@ -82,12 +82,52 @@ define(function(require) {
 					}
 				}
 			});
-		}/*,
-		getS3file: function(){
-			s3.getObject({Bucket: 'bucket', Key: 'key'}).on('success', function(response) {
-				console.log("Key was", response.request.params.Key);
-			}).send();
-		}*/
+		},
+		getS3File: function(fileKey, callback) {
+			var self = this;
+
+			var bucket = new self.AWS.S3({
+				params: {
+					Bucket: self.settings.bucketName
+				}
+			});
+
+			bucket.getObject({
+				Key: fileKey
+			}, function(err, data) {
+				if(err) {
+					// an error occurred
+					console.log(err, err.stack);
+				} else {
+					// successful response
+					console.log(data);
+
+					if(typeof(callback) === 'function') {
+						callback(data);
+					}
+				}
+			});
+		},
+		getS3FileUrl: function(fileKey, callback) {
+			var self = this;
+
+			var bucket = new self.AWS.S3({
+				params: {
+					Bucket: self.settings.bucketName
+				}
+			});
+
+			var url = bucket.getSignedUrl('getObject', {
+				Key: fileKey
+			});
+
+			console.log('The File URL is:');
+			console.log(url);
+
+			if(typeof(callback) === 'function') {
+				callback(url);
+			}
+		}
 	};
 
 
@@ -110,6 +150,18 @@ define(function(require) {
 				default: //case 'aws':
 					AWSadapter.getS3files(callback);
 			}
+		},
+		getRecordFile: function(filename, callback) {
+			switch(settings.storage) {
+				default: //case 'aws':
+					AWSadapter.getS3File(filename, callback);
+			}
+		},
+		getRecordFileUrl: function(filename, callback) {
+			switch(settings.storage) {
+				default: //case 'aws':
+					AWSadapter.getS3FileUrl(filename, callback);
+			}
 		}
 
 	};
@@ -121,6 +173,12 @@ define(function(require) {
 		},
 		getRecordsFiles: function(callback) {
 			methods.getRecordsFilesList(callback);
+		},
+		getRecordFile: function(filename, callback) {
+			methods.getRecordFile(filename, callback);
+		},
+		getRecordFileUrl: function(filename, callback) {
+			methods.getRecordFileUrl(filename, callback);
 		}
 	}
 });

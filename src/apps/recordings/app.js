@@ -152,6 +152,7 @@ define(function(require) {
 						for(var fi=0, flen=files.length; fi < flen; fi++) {
 							desiredFilename = self.settings.filenameTemplate.replace('{{call_id}}', callId);
 							if(files[fi].Key === desiredFilename) {
+								cdrs[ci].recording_file_name = desiredFilename;
 								cdrs[ci].recording_url = files[fi].url;
 								CDRsWithFilesArr.push(cdrs[ci]);
 								break;
@@ -177,24 +178,46 @@ define(function(require) {
 		},
 
 		_initRecordingsTableBehavior: function() {
+			var self = this;
+
 			$('table#recordings-list').footable({
 				'paging': {
 					'enabled': true,
-					'size': 10
+					'size': 7
+				},
+				'on': {
+					'postinit.ft.table': function(e, ft) {
+						self._initAudioButtons();
+					},
+					'postdraw.ft.table' : function() {
+						self._initAudioButtons();
+					}
 				}
-			}, function(ft) {
-				$('.js-play-audio').click(function(e) {
-					e.preventDefault();
-					var $btn = $(this);
-					var $btnContainer = $btn.parent();
+			});
+		},
 
+		_initAudioButtons: function() {
+			$('.js-play-audio').not('.js-handled').click(function(e) {
+				e.preventDefault();
+				var $btn = $(this);
+				var $btnContainer = $btn.parent();
+
+				RemoteStorage.getRecordFileUrl($btn.data('filename'), function(url){
 					$btnContainer.html(
 						'<audio controls="controls" preload="auto" autoplay="autoplay">' +
-						'<source src="' + $btn.attr('href') + '" type="audio/mpeg">' +
+						'<source src="' + url + '" type="audio/mpeg">' +
 						'</audio>'
 					);
 				});
-			});
+			}).addClass('js-handled');
+
+			$('.js-download-audio').not('.js-handled').click(function(e) {
+				var $btn = $(this);
+
+				RemoteStorage.getRecordFileUrl($btn.attr('download'), function(url) {
+					$btn.attr('href', url);
+				});
+			}).addClass('js-handled');
 		},
 
 		_initHandlebarsHelpers: function() {

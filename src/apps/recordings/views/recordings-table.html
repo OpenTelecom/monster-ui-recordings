@@ -2,12 +2,12 @@
 <table id="recordings-list" data-sorting="true">
 	<thead>
 		<tr>
-			<th>№</th>
+			<th data-type="number">№</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.direction}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
+			<th data-type="date">{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
+			<th data-type="number">{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>
 			<th data-type="html" data-sort-use="text">
 				{{i18n.recordings.recordingsTable.columnHeader.play}}
@@ -29,12 +29,12 @@
 			<td>{{from}}</td>
 			<td>
 				<div class="btn-wrapper">
-					<a class="js-play-audio play-btn" href="{{recording_url}}"></a>
+					<a class="js-play-audio play-btn" data-filename="{{recording_file_name}}" href=""></a>
 				</div>
 			</td>
 			<td>
 				<div class="btn-wrapper">
-					<a class="download-btn" href="{{recording_url}}" download=""></a>
+					<a class="js-download-audio download-btn" href="" download="{{recording_file_name}}"></a>
 				</div>
 			</td>
 		</tr>
