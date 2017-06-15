@@ -128,6 +128,43 @@ define(function(require) {
 			});
 		},
 
+		_getCDR: function(cdrId, callback) {
+			var self = this;
+			console.log('Get CDR');
+			// 'get': { verb: 'GET', url: 'accounts/{accountId}/cdrs/{cdrId}' },
+
+			if(!cdrId || typeof(cdrId) === 'undefined') {
+				self.log('Error: CDR ID not found');
+			}
+
+			self.callApi({
+				resource: 'cdrs.get',
+				data: {
+					accountId: self.accountId,
+					cdrId: cdrId
+				},
+				success: function(data, status) {
+					console.log('CDR data:');
+					console.log(data);
+					var cdr = data.data;
+
+					if(cdr.length === 0) {
+						console.log('Warning: No CDR #' + cdrId);
+						return;
+					}
+
+					if(typeof(callback) === 'function') {
+						callback(cdr);
+					}
+				},
+				error: function(data, status) {
+					//_callback({}, uiRestrictions);
+					console.log('get cdr error');
+					console.log(data);
+				}
+			});
+		},
+
 		_renderRecordingsList: function($appContainer) {
 			var self = this;
 			RemoteStorage.getRecordsFiles(function(bucketContent, bucketBaseUrl) {
@@ -158,6 +195,11 @@ define(function(require) {
 								break;
 							}
 						}
+
+						/*self._getCDR(cdrs[ci].id, function(data) {
+							console.log(data);
+						})*/
+
 					}
 
 					console.log('CDRs with Files:');
@@ -184,6 +226,12 @@ define(function(require) {
 				'paging': {
 					'enabled': true,
 					'size': 7
+				},
+				'filtering': {
+					'enabled': true
+				},
+				'sorting': {
+					'enabled': true
 				},
 				'on': {
 					'postinit.ft.table': function(e, ft) {
