@@ -1,17 +1,35 @@
+<div class="filters">
+	<div class="filter-item datetime-filter">
+		<input id="date-from" class="date-input" type="text"/>
+		<input id="time-from" class="time-input" type="text"/>
+		<span class="delimiter">to</span>
+		<input id="date-to" class="date-input" type="text"/>
+		<input id="time-to" class="time-input" type="text"/>
+		<div class="set-date-buttons">
+			<a href="" class="js-set-date-range" data-range="all">all time</a>
+			<a href="" class="js-set-date-range" data-range="last-year">last year</a>
+			<a href="" class="js-set-date-range" data-range="last-month">last month</a>
+			<a href="" class="js-set-date-range" data-range="last-week">last week</a>
+			<a href="" class="js-set-date-range date-range-active" data-range="last-day">last day</a>
+			<a href="" class="js-set-date-range" data-range="last-hour">last hour</a>
+		</div>
+	</div>
+
+</div>
 <table id="recordings-list">
 	<thead>
 		<tr>
-			<th data-type="number">№</th>
+			<th>№</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.direction}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>
-			<th data-type="date">{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
-			<th data-type="number">{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>
-			<th data-filterable="false" data-type="html" data-sort-use="text">
+			<th>
 				{{i18n.recordings.recordingsTable.columnHeader.play}}
 			</th>
-			<th data-filterable="false" data-type="html" data-sort-use="text">
+			<th>
 				{{i18n.recordings.recordingsTable.columnHeader.download}}
 			</th>
 		</tr>

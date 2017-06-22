@@ -3,8 +3,9 @@ define(function(require) {
 		_ = require('underscore'),
 		monster = require('monster'),
 		Handlebars = require('handlebars'),
-		footable = require('footable'),
 		RemoteStorage = require('remote-storage-adapter');
+
+	require('data-tables');
 
 	var app = {
 		name: 'recordings',
@@ -60,7 +61,6 @@ define(function(require) {
 			console.log('render');
 			var self = this,
 				parent = _.isEmpty(container) ? $('#monster-content') : container;
-
 
 			monster.ui.generateAppLayout(self, {
 				menus: [
@@ -199,7 +199,6 @@ define(function(require) {
 						/*self._getCDR(cdrs[ci].id, function(data) {
 							console.log(data);
 						})*/
-
 					}
 
 					console.log('CDRs with Files:');
@@ -219,29 +218,164 @@ define(function(require) {
 			});
 		},
 
+		_initDateTimePickers: function() {
+			var $dateFrom = $('#date-from');
+			var $dateTo = $('#date-to');
+
+			var $timeFrom = $('#time-from');
+			var $timeTo = $('#time-to');
+
+			monster.ui.datepicker($dateFrom, {
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: 'yy-mm-dd',
+				autoclose: true
+			});
+
+			monster.ui.datepicker($dateTo, {
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: 'yy-mm-dd',
+				autoclose: true
+			});
+
+			monster.ui.timepicker($timeFrom, {
+				showDuration: true,
+				timeFormat: 'H:i'
+			});
+
+			monster.ui.timepicker($timeTo, {
+				showDuration: true,
+				timeFormat: 'H:i'
+			});
+
+			$timeFrom.timepicker('setTime', new Date());
+			$timeTo.timepicker('setTime', new Date());
+
+			var d = new Date();
+			$dateFrom.datepicker('setDate', d);
+			d.setDate(d.getDate() - 1);
+			$dateTo.datepicker('setDate', d);
+		},
+
+		_initDateTimeFilter: function(table) {
+			var self = this;
+
+			var getDate = function(element) {
+				var date;
+				try {
+					date = $.datepicker.parseDate('yy-mm-dd', element.value);
+				} catch( error ) {
+					date = null;
+				}
+				return date;
+			};
+
+			var $dateFrom = $('#date-from');
+			var $dateTo = $('#date-to');
+
+			$dateFrom.on('change keyup', function() {
+				$dateTo.datepicker('option', 'minDate', getDate(this));
+				table.draw();
+			});
+
+			$dateTo.on('change keyup', function() {
+				$dateFrom.datepicker('option', 'maxDate', getDate(this));
+				table.draw();
+			});
+
+			$('#time-to').on('change keyup', function() {
+				table.draw();
+			});
+
+			$('#time-from').on('change keyup', function() {
+				table.draw();
+			});
+
+			$('.js-set-date-range').on('click', function(e) {
+				e.preventDefault();
+				self._setDatetimeRangeByKey($(this).data('range'));
+			})
+		},
+
+		_setDatetimeRangeByKey: function(key) {
+			var d = new Date(),
+				self = this;
+			switch(key) {
+				case 'last-year':
+
+					break;
+				case 'last-month':
+					break;
+				case 'last-week':
+					break;
+				case 'last-day':
+					break;
+				case 'last-hour':
+					break;
+				default: // "all"
+
+			}
+
+			self._setDatetimeRange()
+
+		},
+
+		_setDatetimeRange: function(startDate, endDate) {
+			$('#date-from').datepicker('setDate', startDate);
+			$('#time-from').timepicker('setTime', startDate);
+			$('#date-to').datepicker('setDate', endDate);
+			$('#time-to').timepicker('setTime', endDate);
+		},
+
 		_initRecordingsTableBehavior: function() {
 			var self = this;
 
-			$('table#recordings-list').footable({
-				'paging': {
-					'enabled': true,
-					'size': 7
-				},
-				'filtering': {
-					'enabled': true
-				},
-				'sorting': {
-					'enabled': true
-				},
-				'on': {
-					'postinit.ft.table': function(e, ft) {
-						self._initAudioButtons();
-					},
-					'postdraw.ft.table' : function() {
-						self._initAudioButtons();
-					}
+			var $recordingsTable = $('table#recordings-list');
+
+			self._initAudioButtons();
+			self._initDateTimePickers($recordingsTable);
+
+			var parseDateValue = function(rawDate) {
+				console.log(rawDate);
+				var dateArray= rawDate.split('/');
+				return dateArray[2] + dateArray[0] + dateArray[1];
+			};
+
+			var parseDateTimeValue = function(rawDT) {
+				// rawDT example: '2017-05-25 14:26:00'
+				if(typeof(rawDT) === 'string') {
+					// '2017-05-25 14:26:00' to '20170525142600'
+					return rawDT.replace(/[\s\:\-]/g, '');
+					//'2017-05-25 14:26:00'.replace(/[\s\:\-]/g, '');
 				}
+			};
+
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
+				var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
+				var evalDate= parseDateTimeValue(data[3]);
+				console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
+				return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
 			});
+
+			var table = $recordingsTable.DataTable({
+				'bStateSave': false,
+				'lengthMenu': [[5, 25, 50, -1], [5, 25, 50, 'All']],
+				'aoColumns': [
+					null, null, null, {'sType': 'date'}, null, null, null, null, null
+				],
+				'columnDefs': [
+					{
+						'render': function (data, type, row) {
+							return data;
+						},
+						'targets': 3
+					}
+				]
+			});
+
+			self._initDateTimeFilter(table);
 		},
 
 		_initAudioButtons: function() {
