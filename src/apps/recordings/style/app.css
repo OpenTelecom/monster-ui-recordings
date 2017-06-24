@@ -232,7 +232,9 @@ input[type="text"] {
 	border-bottom: 1px dashed;
 }
 
-.set-date-buttons .date-range-active,
+.set-date-buttons .date-range-active:link,
+.set-date-buttons .date-range-active:active,
+.set-date-buttons .date-range-active:visited,
 .set-date-buttons .date-range-active:hover {
 	color: #333;
 	border-bottom: none;

@@ -248,14 +248,6 @@ define(function(require) {
 				showDuration: true,
 				timeFormat: 'H:i'
 			});
-
-			$timeFrom.timepicker('setTime', new Date());
-			$timeTo.timepicker('setTime', new Date());
-
-			var d = new Date();
-			$dateFrom.datepicker('setDate', d);
-			d.setDate(d.getDate() - 1);
-			$dateTo.datepicker('setDate', d);
 		},
 
 		_initDateTimeFilter: function(table) {
@@ -294,38 +286,45 @@ define(function(require) {
 
 			$('.js-set-date-range').on('click', function(e) {
 				e.preventDefault();
-				self._setDatetimeRangeByKey($(this).data('range'));
+				$('.js-set-date-range').removeClass('date-range-active');
+				$(this).addClass('date-range-active');
+
+				self._setDatetimeRangeByKey($(this).data('range'), table);
 			})
 		},
 
-		_setDatetimeRangeByKey: function(key) {
-			var d = new Date(),
+		_setDatetimeRangeByKey: function(key, table) {
+			var startDate = new Date(),
+				endDate = new Date(),
 				self = this;
 			switch(key) {
 				case 'last-year':
-
+					startDate.setFullYear(endDate.getFullYear()-1);
 					break;
 				case 'last-month':
+					startDate.setMonth(endDate.getMonth()-1);
 					break;
 				case 'last-week':
+					startDate.setDate(endDate.getDate() - 7);
 					break;
 				case 'last-day':
+					startDate.setDate(endDate.getDate() - 1);
 					break;
 				case 'last-hour':
+					startDate.setHours(endDate.getHours() - 1);
 					break;
 				default: // "all"
-
+					startDate = new Date(0);
 			}
-
-			self._setDatetimeRange()
-
+			self._setDatetimeRange(startDate, endDate, table);
 		},
 
-		_setDatetimeRange: function(startDate, endDate) {
+		_setDatetimeRange: function(startDate, endDate, table) {
 			$('#date-from').datepicker('setDate', startDate);
 			$('#time-from').timepicker('setTime', startDate);
 			$('#date-to').datepicker('setDate', endDate);
 			$('#time-to').timepicker('setTime', endDate);
+			table.draw();
 		},
 
 		_initRecordingsTableBehavior: function() {
@@ -375,6 +374,7 @@ define(function(require) {
 				]
 			});
 
+			self._setDatetimeRangeByKey('last-day', table);
 			self._initDateTimeFilter(table);
 		},
 
