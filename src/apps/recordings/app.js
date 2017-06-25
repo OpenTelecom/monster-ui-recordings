@@ -293,6 +293,13 @@ define(function(require) {
 			})
 		},
 
+		_initDirectionFilter: function(table) {
+			$('input[name="direction"]').on('change', function() {
+				table.draw();
+				console.log('direction redraw');
+			});
+		},
+
 		_setDatetimeRangeByKey: function(key, table) {
 			var startDate = new Date(),
 				endDate = new Date(),
@@ -346,16 +353,23 @@ define(function(require) {
 				if(typeof(rawDT) === 'string') {
 					// '2017-05-25 14:26:00' to '20170525142600'
 					return rawDT.replace(/[\s\:\-]/g, '');
-					//'2017-05-25 14:26:00'.replace(/[\s\:\-]/g, '');
 				}
 			};
 
+			// datetime filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 				var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
 				var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
 				var evalDate= parseDateTimeValue(data[3]);
-				console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
+				//console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
 				return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
+			});
+
+			// direction filter
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var evalDirection = data[1];
+				var direction = $('input[name="direction"]:checked').val();
+				return (direction === 'all' || direction === evalDirection);
 			});
 
 			var table = $recordingsTable.DataTable({
@@ -376,6 +390,7 @@ define(function(require) {
 
 			self._setDatetimeRangeByKey('last-day', table);
 			self._initDateTimeFilter(table);
+			self._initDirectionFilter(table);
 		},
 
 		_initAudioButtons: function() {

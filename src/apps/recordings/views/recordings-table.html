@@ -14,6 +14,17 @@
 			<a href="" class="js-set-date-range" data-range="last-hour">last hour</a>
 		</div>
 	</div>
+	<div class="filter-item direction-filter">
+		{{#monsterRadio "middle-radio" "append-label" "All direction"}}
+			<input type="radio" value="all" name="direction" checked/>
+		{{/monsterRadio}}
+		{{#monsterRadio "middle-radio" "append-label" "Outgoing"}}
+			<input type="radio" value="outgoing" name="direction" />
+		{{/monsterRadio}}
+		{{#monsterRadio "middle-radio" "append-label" "Inbound"}}
+			<input type="radio" value="inbound" name="direction" />
+		{{/monsterRadio}}
+	</div>
 
 </div>
 <table id="recordings-list">

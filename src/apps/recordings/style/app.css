@@ -38,6 +38,16 @@ li.ui-timepicker-selected,
 	background: #22A5FF;
 }
 
+/* Bootstrap extend */
+[data-toggle=buttons]>.btn input[type=checkbox],
+[data-toggle=buttons]>.btn input[type=radio],
+[data-toggle=buttons]>.btn-group>.btn input[type=checkbox],
+[data-toggle=buttons]>.btn-group>.btn input[type=radio] {
+	position: absolute;
+	clip: rect(0,0,0,0);
+	pointer-events: none;
+}
+
 /* App styles*/
 label {
 	font-size: 17px;
