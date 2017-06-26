@@ -294,7 +294,7 @@ define(function(require) {
 		},
 
 		_initDirectionFilter: function(table) {
-			$('input[name="direction"]').on('change', function() {
+			$('select#direction').on('change', function() {
 				table.draw();
 				console.log('direction redraw');
 			});
@@ -337,17 +337,32 @@ define(function(require) {
 		_initRecordingsTableBehavior: function() {
 			var self = this;
 
-			var $recordingsTable = $('table#recordings-list');
-
 			self._initAudioButtons();
-			self._initDateTimePickers($recordingsTable);
+			self._initDateTimePickers();
+			self._initDataTablesFilters();
 
-			var parseDateValue = function(rawDate) {
-				console.log(rawDate);
-				var dateArray= rawDate.split('/');
-				return dateArray[2] + dateArray[0] + dateArray[1];
-			};
+			var table = $('table#recordings-list').DataTable({
+				'bStateSave': false,
+				'lengthMenu': [[5, 25, 50, -1], [5, 25, 50, 'All']],
+				'aoColumns': [
+					null, null, null, {'sType': 'date'}, null, null, null, null, null
+				],
+				'columnDefs': [
+					{
+						'render': function (data, type, row) {
+							return data;
+						},
+						'targets': 3
+					}
+				]
+			});
 
+			self._setDatetimeRangeByKey('all', table);
+			self._initDateTimeFilter(table);
+			self._initDirectionFilter(table);
+		},
+
+		_initDataTablesFilters: function(){
 			var parseDateTimeValue = function(rawDT) {
 				// rawDT example: '2017-05-25 14:26:00'
 				if(typeof(rawDT) === 'string') {
@@ -368,29 +383,9 @@ define(function(require) {
 			// direction filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 				var evalDirection = data[1];
-				var direction = $('input[name="direction"]:checked').val();
+				var direction = $('select#direction option:selected').val();
 				return (direction === 'all' || direction === evalDirection);
 			});
-
-			var table = $recordingsTable.DataTable({
-				'bStateSave': false,
-				'lengthMenu': [[5, 25, 50, -1], [5, 25, 50, 'All']],
-				'aoColumns': [
-					null, null, null, {'sType': 'date'}, null, null, null, null, null
-				],
-				'columnDefs': [
-					{
-						'render': function (data, type, row) {
-							return data;
-						},
-						'targets': 3
-					}
-				]
-			});
-
-			self._setDatetimeRangeByKey('last-day', table);
-			self._initDateTimeFilter(table);
-			self._initDirectionFilter(table);
 		},
 
 		_initAudioButtons: function() {

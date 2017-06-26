@@ -6,24 +6,22 @@
 		<input id="date-to" class="date-input" type="text"/>
 		<input id="time-to" class="time-input" type="text"/>
 		<div class="set-date-buttons">
-			<a href="" class="js-set-date-range" data-range="all">all time</a>
+			<a href="" class="js-set-date-range date-range-active" data-range="all">all time</a>
 			<a href="" class="js-set-date-range" data-range="last-year">last year</a>
 			<a href="" class="js-set-date-range" data-range="last-month">last month</a>
 			<a href="" class="js-set-date-range" data-range="last-week">last week</a>
-			<a href="" class="js-set-date-range date-range-active" data-range="last-day">last day</a>
+			<a href="" class="js-set-date-range" data-range="last-day">last day</a>
 			<a href="" class="js-set-date-range" data-range="last-hour">last hour</a>
 		</div>
 	</div>
 	<div class="filter-item direction-filter">
-		{{#monsterRadio "middle-radio" "append-label" "All direction"}}
-			<input type="radio" value="all" name="direction" checked/>
-		{{/monsterRadio}}
-		{{#monsterRadio "middle-radio" "append-label" "Outgoing"}}
-			<input type="radio" value="outgoing" name="direction" />
-		{{/monsterRadio}}
-		{{#monsterRadio "middle-radio" "append-label" "Inbound"}}
-			<input type="radio" value="inbound" name="direction" />
-		{{/monsterRadio}}
+		<div class="form-group">
+			<select class="form-control" id="direction">
+				<option value="all" selected>All direction</option>
+				<option value="outgoing">Outgoing</option>
+				<option value="inbound">Inbound</option>
+			</select>
+		</div>
 	</div>
 
 </div>

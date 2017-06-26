@@ -60,6 +60,7 @@ input[type="text"] {
 	-moz-box-shadow: inset 1px 1px #ddd;
 	box-shadow: inset 1px 1px #ddd;
 	border: none;
+	font-size: 18px;
 }
 
 
@@ -197,12 +198,10 @@ input[type="text"] {
 	animation-play-state: running;
 }
 
-#recordings_wrapper table thead .footable-filtering {
-	background: #F5F5F5;
-}
-
-#recordings_wrapper table .footable-filtering th {
-	border: none;
+.filters .filter-item {
+	display: inline-block;
+	vertical-align: top;
+	padding-right: 15px;
 }
 
 .datetime-filter .date-input,
@@ -257,6 +256,7 @@ input[type="text"] {
 	-moz-box-shadow: inset 1px 1px #ddd;
 	box-shadow: inset 1px 1px #ddd;
 	border: none;
+	font-size: 18px;
 }
 
 select[name="recordings-list_length"] {
