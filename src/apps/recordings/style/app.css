@@ -250,6 +250,43 @@ input[type="text"] {
 	cursor: default;
 }
 
+.chosen-container {
+	vertical-align: top;
+
+}
+
+.chosen-container-multi .chosen-choices li.search-choice,
+.chosen-container .chosen-results li {
+	font-size: 18px;
+}
+
+.chosen-container-multi .chosen-choices li.search-field {
+	height: 30px;
+}
+
+.chosen-container.chosen-with-drop .chosen-drop {
+	-webkit-box-shadow: inset 1px 0 #ddd;
+	-moz-box-shadow: inset 1px 0 #ddd;
+	box-shadow: inset 1px 0 #ddd;
+	border: none;
+}
+
+.chosen-container-multi .chosen-choices li.search-field input[type=text] {
+	width: 149px;
+	font-weight: normal;
+	font-size: 18px;
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	border: none;
+	box-shadow: none;
+}
+
+.chosen-container-multi .chosen-choices {
+	-webkit-box-shadow: inset 1px 1px #ddd;
+	-moz-box-shadow: inset 1px 1px #ddd;
+	box-shadow: inset 1px 1px #ddd;
+	border: none;
+}
+
 .dataTables_wrapper .dataTables_filter input {
 	vertical-align: 1px;
 	-webkit-box-shadow: inset 1px 1px #ddd;

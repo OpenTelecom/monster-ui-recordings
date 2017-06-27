@@ -360,6 +360,7 @@ define(function(require) {
 			self._setDatetimeRangeByKey('all', table);
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
+			$('#caller-id-name').chosen();
 		},
 
 		_initDataTablesFilters: function(){
@@ -385,6 +386,24 @@ define(function(require) {
 				var evalDirection = data[1];
 				var direction = $('select#direction option:selected').val();
 				return (direction === 'all' || direction === evalDirection);
+			});
+
+			// caller id name filter
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var namesArr = $("#caller-id-name").val();
+				var evalName = data[2];
+				if(!namesArr || typeof(namesArr) === 'undefined' || !evalName) {
+					return true;
+				}
+
+				for(var n=0, len=namesArr.length; n<len; n++) {
+					debugger;
+					if(evalName === namesArr[n]) {
+						return true;
+					}
+				}
+
+				return false;
 			});
 		},
 
