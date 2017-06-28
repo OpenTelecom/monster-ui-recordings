@@ -18,7 +18,7 @@
 		<div class="form-group">
 			<select class="form-control" id="direction">
 				<option value="all" selected>All direction</option>
-				<option value="outgoing">Outgoing</option>
+				<option value="outbound">Outbound</option>
 				<option value="inbound">Inbound</option>
 			</select>
 		</div>
@@ -26,8 +26,9 @@
 	<div class="filter-item caller-id-name-filter">
 		<div class="form-group">
 			<select data-placeholder="Choose a caller name..." class="form-control" id="caller-id-name" multiple>
-				<option value="Vladimir Barkas">Vladimir Barkas</option>
-				<option value="Michael Radionov">Michael Radionov</option>
+				{{#each this.callerIdNames}}
+					<option value="{{this}}">{{this}}</option>
+				{{/each}}
 			</select>
 		</div>
 	</div>

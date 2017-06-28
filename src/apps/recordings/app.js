@@ -182,7 +182,8 @@ define(function(require) {
 				self._getCDRs(function(cdrs){
 					var callId,
 						desiredFilename,
-						CDRsWithFilesArr = [];
+						CDRsWithFilesArr = [],
+						uniqueCallerIdNames = new Set();
 
 					for(var ci=0, clen=cdrs.length; ci < clen; ci++) {
 						callId = cdrs[ci].call_id;
@@ -192,6 +193,7 @@ define(function(require) {
 								cdrs[ci].recording_file_name = desiredFilename;
 								cdrs[ci].recording_url = files[fi].url;
 								CDRsWithFilesArr.push(cdrs[ci]);
+								uniqueCallerIdNames.add(cdrs[ci]['caller_id_name']);
 								break;
 							}
 						}
@@ -204,9 +206,13 @@ define(function(require) {
 					console.log('CDRs with Files:');
 					console.log(CDRsWithFilesArr);
 
+					console.log('Unique Caller Id Names:');
+					console.log(uniqueCallerIdNames);
+
 
 					var template = $(monster.template(self, 'recordings-table', {
-						'recordings': CDRsWithFilesArr
+						'recordings': CDRsWithFilesArr,
+						'callerIdNames': Array.from(uniqueCallerIdNames)
 					}));
 
 					console.log(template);
@@ -300,6 +306,16 @@ define(function(require) {
 			});
 		},
 
+		_initCallerIdNameilter: function(table) {
+			var $select = $('#caller-id-name');
+			$select.chosen();
+
+			$select.on('change', function() {
+				table.draw();
+				console.log('Caller Id Name redraw');
+			});
+		},
+
 		_setDatetimeRangeByKey: function(key, table) {
 			var startDate = new Date(),
 				endDate = new Date(),
@@ -360,7 +376,7 @@ define(function(require) {
 			self._setDatetimeRangeByKey('all', table);
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
-			$('#caller-id-name').chosen();
+			self._initCallerIdNameilter(table);
 		},
 
 		_initDataTablesFilters: function(){
@@ -397,7 +413,6 @@ define(function(require) {
 				}
 
 				for(var n=0, len=namesArr.length; n<len; n++) {
-					debugger;
 					if(evalName === namesArr[n]) {
 						return true;
 					}
