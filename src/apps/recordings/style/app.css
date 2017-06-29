@@ -204,6 +204,15 @@ input[type="text"] {
 	padding-right: 15px;
 }
 
+.duration-filter {
+	padding: 5px 12px 0;
+	width: 262px;
+}
+
+.duration-filter-values {
+	text-align: center;
+}
+
 .datetime-filter .date-input,
 .datetime-filter .time-input {
 	border: 0;

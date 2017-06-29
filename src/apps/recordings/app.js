@@ -183,7 +183,10 @@ define(function(require) {
 					var callId,
 						desiredFilename,
 						CDRsWithFilesArr = [],
-						uniqueCallerIdNames = new Set();
+						uniqueCallerIdNames = new Set(),
+						minDuration = 0,
+						maxDuration = 0,
+						duration;
 
 					for(var ci=0, clen=cdrs.length; ci < clen; ci++) {
 						callId = cdrs[ci].call_id;
@@ -194,6 +197,17 @@ define(function(require) {
 								cdrs[ci].recording_url = files[fi].url;
 								CDRsWithFilesArr.push(cdrs[ci]);
 								uniqueCallerIdNames.add(cdrs[ci]['caller_id_name']);
+
+								duration = parseInt(cdrs[ci].duration_seconds);
+
+								if(!maxDuration || duration > maxDuration) {
+									maxDuration = duration;
+								}
+
+								if(!minDuration || duration < minDuration) {
+									minDuration = duration;
+								}
+
 								break;
 							}
 						}
@@ -212,7 +226,9 @@ define(function(require) {
 
 					var template = $(monster.template(self, 'recordings-table', {
 						'recordings': CDRsWithFilesArr,
-						'callerIdNames': Array.from(uniqueCallerIdNames)
+						'callerIdNames': Array.from(uniqueCallerIdNames),
+						'minDuration': minDuration,
+						'maxDuration': maxDuration
 					}));
 
 					console.log(template);
@@ -306,13 +322,30 @@ define(function(require) {
 			});
 		},
 
-		_initCallerIdNameilter: function(table) {
+		_initCallerIdNameFilter: function(table) {
 			var $select = $('#caller-id-name');
 			$select.chosen();
 
 			$select.on('change', function() {
 				table.draw();
 				console.log('Caller Id Name redraw');
+			});
+		},
+
+		_initDurationFilter: function(table) {
+			var minDuration = parseInt($('#duration-range-min').text());
+			var maxDuration = parseInt($('#duration-range-max').text());
+
+			$('#duration-slider').slider({
+				range: true,
+				min: minDuration,
+				max: maxDuration,
+				values: [ minDuration, maxDuration],
+				slide: function( event, ui ) {
+					$('#duration-range-min').text(ui.values[0]);
+					$('#duration-range-max').text(ui.values[1]);
+					table.draw();
+				}
 			});
 		},
 
@@ -376,7 +409,8 @@ define(function(require) {
 			self._setDatetimeRangeByKey('all', table);
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
-			self._initCallerIdNameilter(table);
+			self._initCallerIdNameFilter(table);
+			self._initDurationFilter(table);
 		},
 
 		_initDataTablesFilters: function(){
@@ -419,6 +453,15 @@ define(function(require) {
 				}
 
 				return false;
+			});
+
+			// duration filter
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var min = parseInt($('#duration-range-min').text());
+				var max = parseInt($('#duration-range-max').text());
+				var eval = parseInt(data[5]);
+
+				return (eval >= min && eval <= max);
 			});
 		},
 
