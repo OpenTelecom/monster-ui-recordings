@@ -402,6 +402,11 @@ define(function(require) {
 				'aoColumns': [
 					null, null, null, {'sType': 'date'}, null, null, null, null, null
 				],
+				'initComplete': function(settings, json) {
+					// move filters outside Datatables wrapper in reserved containers
+					$('#recordings-list_length').appendTo('#filter-length-box');
+					$('#recordings-list_filter').appendTo('#filter-search-box');
+				},
 				'columnDefs': [
 					{
 						'render': function (data, type, row) {

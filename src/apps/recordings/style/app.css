@@ -208,6 +208,11 @@ input[type="text"] {
 	padding-right: 15px;
 }
 
+.filter-item .btn {
+	position: relative;
+	top: -3px;
+}
+
 .duration-filter {
 	padding: 5px 12px 0;
 	width: 262px;

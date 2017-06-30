@@ -1,4 +1,4 @@
-<div class="filters">
+<div id="filters" class="filters">
 	<div class="filter-item datetime-filter">
 		<input id="date-from" class="date-input" type="text"/>
 		<input id="time-from" class="time-input" type="text"/>
@@ -40,7 +40,13 @@
 			<span id="duration-range-max">{{maxDuration}}</span> sec.
 		</div>
 	</div>
-	<div>
+	<div id="filter-length-box" class="filter-item filter-length">
+		{{!-- reserved container for move here --}}
+	</div>
+	<div id="filter-search-box" class="filter-item filter-search">
+		{{!--  reserved container for move here --}}
+	</div>
+	<div class="filter-item reset-filter">
 		<a id="reset-filters" class="btn">Reset filters</a>
 	</div>
 
