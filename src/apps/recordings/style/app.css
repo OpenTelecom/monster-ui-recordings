@@ -198,6 +198,10 @@ input[type="text"] {
 	animation-play-state: running;
 }
 
+.filters {
+	margin-bottom: 15px;
+}
+
 .filters .filter-item {
 	display: inline-block;
 	vertical-align: top;

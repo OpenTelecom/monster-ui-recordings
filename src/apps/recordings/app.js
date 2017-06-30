@@ -275,6 +275,8 @@ define(function(require) {
 		_initDateTimeFilter: function(table) {
 			var self = this;
 
+			self._setDatetimeRangeByKey('all', table);
+
 			var getDate = function(element) {
 				var date;
 				try {
@@ -372,6 +374,10 @@ define(function(require) {
 				default: // "all"
 					startDate = new Date(0);
 			}
+
+			$('.js-set-date-range').removeClass('date-range-active');
+			$('.js-set-date-range[data-range="' + key + '"]').addClass('date-range-active');
+
 			self._setDatetimeRange(startDate, endDate, table);
 		},
 
@@ -406,11 +412,34 @@ define(function(require) {
 				]
 			});
 
-			self._setDatetimeRangeByKey('all', table);
+
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
 			self._initCallerIdNameFilter(table);
 			self._initDurationFilter(table);
+			self._initResetFiltersBtn(table);
+
+		},
+
+		_initResetFiltersBtn: function(table) {
+			var self = this;
+
+			$('#reset-filters').on('click', function(e) {
+				e.preventDefault();
+
+				self._setDatetimeRangeByKey('all', table);
+				$('#direction').val('all');
+				$('#caller-id-name').val('').trigger('chosen:updated');
+
+				var $durationSlider = $('#duration-slider');
+				var min = $durationSlider.slider('option', 'min');
+				var max = $durationSlider.slider('option', 'max');
+				$durationSlider.slider('option', 'values', [min, max]);
+				$('#duration-range-min').text(min);
+				$('#duration-range-max').text(max);
+
+				table.draw();
+			})
 		},
 
 		_initDataTablesFilters: function(){
