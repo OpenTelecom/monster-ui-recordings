@@ -55,7 +55,6 @@ label {
 
 select,
 input[type="text"] {
-	vertical-align: 1px;
 	-webkit-box-shadow: inset 1px 1px #ddd;
 	-moz-box-shadow: inset 1px 1px #ddd;
 	box-shadow: inset 1px 1px #ddd;
@@ -208,9 +207,17 @@ input[type="text"] {
 	padding-right: 15px;
 }
 
+.filter-item label {
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	line-height: 29px;
+	font-size: 18px;
+}
+
 .filter-item .btn {
 	position: relative;
 	top: -3px;
+	font-size: 18px;
+	font-weight: normal;
 }
 
 .duration-filter {
@@ -244,6 +251,13 @@ input[type="text"] {
 	margin: 0 5px;
 	vertical-align: top;
 }
+
+.filter-search input[type="search"] {
+	margin-left: 5px;
+	font-size: 18px;
+	vertical-align: top;
+}
+
 
 .set-date-buttons a {
 	border-radius: 0;
@@ -316,6 +330,10 @@ input[type="text"] {
 
 select[name="recordings-list_length"] {
 	width: 70px;
+	vertical-align: top;
+	font-size: 18px;
+	height: 29px;
+	padding: 0 6px;
 }
 
 
