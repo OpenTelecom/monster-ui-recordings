@@ -442,7 +442,7 @@ define(function(require) {
 				$durationSlider.slider('option', 'values', [min, max]);
 				$('#duration-range-min').text(min);
 				$('#duration-range-max').text(max);
-
+				$('#recordings-list_filter input[type="search"]').val('');
 				table.draw();
 			})
 		},
