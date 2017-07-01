@@ -2,30 +2,30 @@
 	<div class="filter-item datetime-filter">
 		<input id="date-from" class="date-input" type="text"/>
 		<input id="time-from" class="time-input" type="text"/>
-		<span class="delimiter">to</span>
+		<span class="delimiter">{{i18n.recordings.filters.datetime.to}}</span>
 		<input id="date-to" class="date-input" type="text"/>
 		<input id="time-to" class="time-input" type="text"/>
 		<div class="set-date-buttons">
-			<a href="" class="js-set-date-range" data-range="all">all time</a>
-			<a href="" class="js-set-date-range" data-range="last-year">last year</a>
-			<a href="" class="js-set-date-range" data-range="last-month">last month</a>
-			<a href="" class="js-set-date-range" data-range="last-week">last week</a>
-			<a href="" class="js-set-date-range" data-range="last-day">last day</a>
-			<a href="" class="js-set-date-range" data-range="last-hour">last hour</a>
+			<a href="" class="js-set-date-range" data-range="all">{{i18n.recordings.filters.datetime.allTime}}</a>
+			<a href="" class="js-set-date-range" data-range="last-year">{{i18n.recordings.filters.datetime.lastYear}}</a>
+			<a href="" class="js-set-date-range" data-range="last-month">{{i18n.recordings.filters.datetime.lastMonth}}</a>
+			<a href="" class="js-set-date-range" data-range="last-week">{{i18n.recordings.filters.datetime.lastWeek}}</a>
+			<a href="" class="js-set-date-range" data-range="last-day">{{i18n.recordings.filters.datetime.lastDay}}</a>
+			<a href="" class="js-set-date-range" data-range="last-hour">{{i18n.recordings.filters.datetime.lastHour}}</a>
 		</div>
 	</div>
 	<div class="filter-item direction-filter">
 		<div class="form-group">
 			<select class="form-control" id="direction">
-				<option value="all" selected>All direction</option>
-				<option value="outbound">Outbound</option>
-				<option value="inbound">Inbound</option>
+				<option value="all" selected>{{i18n.recordings.filters.direction.all}}</option>
+				<option value="outbound">{{i18n.recordings.filters.direction.outbound}}</option>
+				<option value="inbound">{{i18n.recordings.filters.direction.inbound}}</option>
 			</select>
 		</div>
 	</div>
 	<div class="filter-item caller-id-name-filter">
 		<div class="form-group">
-			<select data-placeholder="Choose a caller name..." class="form-control" id="caller-id-name" multiple>
+			<select data-placeholder="{{i18n.recordings.filters.callerIdName.placeholder}}" class="form-control" id="caller-id-name" multiple>
 				{{#each this.callerIdNames}}
 					<option value="{{this}}">{{this}}</option>
 				{{/each}}
@@ -35,9 +35,9 @@
 	<div class="filter-item duration-filter">
 		<div id="duration-slider"></div>
 		<div class="duration-filter-values">
-			<span>Duration: </span>
+			<span>{{i18n.recordings.filters.duration.title}} </span>
 			<span id="duration-range-min">{{minDuration}}</span>&nbsp;-&nbsp;
-			<span id="duration-range-max">{{maxDuration}}</span> sec.
+			<span id="duration-range-max">{{maxDuration}}</span> {{i18n.recordings.filters.duration.seconds}}
 		</div>
 	</div>
 	<div id="filter-length-box" class="filter-item filter-length">
@@ -47,7 +47,7 @@
 		{{!--  reserved container for move here --}}
 	</div>
 	<div class="filter-item reset-filter">
-		<a id="reset-filters" class="btn">Reset filters</a>
+		<a id="reset-filters" class="btn">{{i18n.recordings.filters.resetBtn.text}}</a>
 	</div>
 
 </div>

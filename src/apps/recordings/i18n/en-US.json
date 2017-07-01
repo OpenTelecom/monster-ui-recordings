@@ -17,6 +17,33 @@
 			},
 			"playBtnText": "Play",
 			"downloadBtnText": "Download"
+		},
+		"filters": {
+			"datetime": {
+				"to": "to",
+				"allTime": "all time",
+				"lastYear": "last year",
+				"lastMonth": "last month",
+				"lastWeek": "last week",
+				"lastDay": "last day",
+				"lastHour": "last hour"
+			},
+			"direction": {
+				"all": "All directions",
+				"outbound": "Outbound",
+				"inbound": "inbound"
+			},
+			"callerIdName": {
+				"placeholder": "Choose a caller name..."
+			},
+			"duration": {
+				"title": "Duration:",
+				"seconds": "sec."
+			},
+			"resetBtn": {
+				"text": "Reset filters"
+			}
+			
 		}
 	}
 }

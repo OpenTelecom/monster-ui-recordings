@@ -6,24 +6,44 @@
 		"recordingsTable": {
 			"title": "Recordings",
 			"columnHeader": {
-				"name": "Name",
-				"lastModified": "Last Modified",
+				"direction": "Direction",
+				"callerIdName": "Caller ID Name",
+				"datetime": "Datetime",
+				"dialerNumber": "Dialer Number",
+				"duration": "Duration (sec)",
+				"from": "From",
 				"play": "Play",
 				"download": "Download"
 			},
 			"playBtnText": "Play",
 			"downloadBtnText": "Download"
 		},
-		"cdrsTable": {
-			"title": "CDRs",
-			"columnHeader": {
-				"direction": "Direction",
-				"callerIdName": "Caller ID Name",
-				"datetime": "Datetime",
-				"dialerNumber": "Dialer Number",
-				"duration": "Duration (sec)",
-				"from": "From"
+		"filters": {
+			"datetime": {
+				"to": "to",
+				"allTime": "all time",
+				"lastYear": "last year",
+				"lastMonth": "last month",
+				"lastWeek": "last week",
+				"lastDay": "last day",
+				"lastHour": "last hour"
+			},
+			"direction": {
+				"all": "All directions",
+				"outbound": "Outbound",
+				"inbound": "inbound"
+			},
+			"callerIdName": {
+				"placeholder": "Choose a caller name..."
+			},
+			"duration": {
+				"title": "Duration:",
+				"seconds": "sec."
+			},
+			"resetBtn": {
+				"text": "Reset filters"
 			}
+			
 		}
 	}
 }
