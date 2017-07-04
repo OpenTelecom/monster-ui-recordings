@@ -1,5 +1,12 @@
 ## Monster UI Recordings
 
+#### Build installer
+Install gulp with dependencies and run it
+```bash
+user@ubuntu:~/monster-ui-recordings$ npm install gulp && npm install gulp-zip && npm install gulp-replace && npm install gulp-modify && gulp
+```
+You can find the "recordings-installer.zip" in "dist" folder
+
 #### Installation:
 
 1. Upload file "recordings-installer.zip" to root directory of your project

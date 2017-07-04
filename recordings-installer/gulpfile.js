@@ -21,7 +21,7 @@ gulp.task('extract_files', function() {
 // modify main.js
 gulp.task('extend_config_file', function () {
 	gulp.src(CONFIG_FILE_PATH)
-		.pipe(modify({ // modify shim property (main.js)
+		.pipe(modify({ // modify "paths" property of main.js
 			fileModifier: function (file, contents) {
 				contents.match(/([^]*paths:\s*)(\{[^\}]*\})(\,[^]*)/gm);
 
@@ -33,8 +33,6 @@ gulp.task('extend_config_file', function () {
 				paths['aws-sdk'] = 'js/vendor/aws-sdk.min';
 				paths['data-tables'] = 'js/vendor/jquery.dataTables.min';
 				paths['remote-storage-adapter'] = 'js/lib/storage-adapter';
-
-				// TODO: add "'data-tables': ['jquery']," to shim
 
 				var sortedPaths = {};
 
@@ -54,35 +52,20 @@ gulp.task('extend_config_file', function () {
 				return part1 + pathsStr + part3;
 			}
 		}))
-		.pipe(modify({ // modify shim property (main.js)
+		.pipe(modify({ // modify "shim" property of main.js
 			fileModifier: function (file, contents) {
-				contents.match(/([^]*shim:\s*)(\{[^\}]*\})(\,[^]*)/gm);
+				contents.match(/([^]*shim\s*:\s*\{)([^;]*)([^]*)/gm);
 
 				var part1 = RegExp.$1;
 				var part2 = RegExp.$2;
 				var part3 = RegExp.$3;
 
-				var shim = JSON.parse(part2.replace(/\'/gm, '"'));
-				shim['data-tables'] = ['jquery'];
+				// if 'data-tables' did not match - add 'data-table' to start of shim object
+				if(part2.indexOf('data-tables') === -1) {
+					return part1 + "\r\n\t\t'data-tables': ['jquery']," + part2 + part3;
+				}
 
-				// TODO: check that
-
-				var sortedShim = {};
-
-				Object.keys(shim)
-					.sort()
-					.forEach(function(v, i) {
-						sortedShim[v] = shim[v];
-					});
-
-				var shimStr = JSON.stringify(sortedShim)
-					.replace(/\"/gm, "'")
-					.replace(/\:/gm, '\: ')
-					.replace(/\{/gm, '\{\r\n\t\t')
-					.replace(/\,/gm, '\,\r\n\t\t')
-					.replace(/\}/gm, '\r\n\t\}');
-
-				return part1 + shimStr + part3;
+				return contents;
 			}
 		}))
 		.pipe(gulp.dest(CONFIG_DIRECTORY));
