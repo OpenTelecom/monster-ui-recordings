@@ -328,6 +328,21 @@ input[type="text"] {
 	font-size: 18px;
 }
 
+.dataTables_wrapper .dt-buttons {
+	padding: 14px 21px 5px;
+}
+
+.dataTables_paginate .pagination {
+	margin: 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	background: white;
+	border-color: #DEDEDE;
+	padding: 4px 14px;
+}
+
 select[name="recordings-list_length"] {
 	width: 70px;
 	vertical-align: top;

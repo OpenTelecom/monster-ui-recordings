@@ -5,7 +5,13 @@ define(function(require) {
 		Handlebars = require('handlebars'),
 		RemoteStorage = require('remote-storage-adapter');
 
-	require('data-tables');
+	require([
+		'datatables.net',
+		'datatables.net-bs',
+		'datatables.net-buttons',
+		'datatables.net-buttons-html5',
+		'datatables.net-buttons-bootstrap'
+	]);
 
 	var app = {
 		name: 'recordings',
@@ -414,9 +420,12 @@ define(function(require) {
 						},
 						'targets': 3
 					}
+				],
+				dom: 'lfrtipB',
+				buttons: [
+					'csvHtml5'
 				]
 			});
-
 
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
