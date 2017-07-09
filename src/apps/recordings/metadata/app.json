@@ -3,15 +3,15 @@
 	"i18n": {
 		"ru-RU": {
 			"label": "Recordings",
-			"description": "Приложение, позволяющее следить за записями."
+			"description": "Приложение, позволяющее эффективно работать с записями разговоров"
 		},
 		"en-US": {
 			"label": "Recordings",
-			"description": "Recordings allows you to monitor the recordings."
+			"description": "The Recordings app allows you to effectively work with call records"
 		},
 		"en-EN": {
 			"label": "Recordings",
-			"description": "Recordings allows you to monitor the recordings."
+			"description": "The Recordings app allows you to effectively work with call records"
 		}
 	},
 	"tags": [
@@ -25,10 +25,7 @@
 	"price": 0,
 	"screenshots": [
 		"recordings1.png",
-		"recordings2.png",
-		"recordings3.png",
-		"recordings4.png",
-		"recordings5.png"
+		"recordings2.png"
 	],
 	"urls": {
 		"documentation": "{documentation_url}",
