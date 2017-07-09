@@ -26,7 +26,15 @@ define(function(require) {
 				'bucketRegion': 'eu-west-2',
 				'version': 'latest'
 			},
-			filenameTemplate: 'call_recording_{{call_id}}.mp3'
+			filenameTemplate: 'call_recording_{{call_id}}.mp3',
+			defaultDateRangeKey: 'all',
+			dateFilterByRequest: false
+		},
+
+		vars: {
+			// temporary variables
+			$appContainer: null,
+			filesList: null // files list from s3
 		},
 
 		i18n: {
@@ -85,8 +93,8 @@ define(function(require) {
 			console.log('renderIndex');
 
 			var self = this,
-				args = pArgs || {},
-				$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
+				args = pArgs || {};
+				self.vars.$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
 
 			RemoteStorage.init('aws', self.settings.aws);
 
@@ -94,13 +102,13 @@ define(function(require) {
 				user: monster.apps.auth.currentUser
 			}));
 
-			$appContainer.fadeOut(function() {
+			self.vars.$appContainer.fadeOut(function() {
 				$(this).empty()
 					.append(template)
 					.fadeIn();
 			});
 
-			self._renderRecordingsList($appContainer);
+			self._renderRecordingsList();
 		},
 
 		_getCDRs: function(callback) {
@@ -130,6 +138,31 @@ define(function(require) {
 					//_callback({}, uiRestrictions);
 					console.log('get cdrs error data');
 					console.log(data);
+				}
+			});
+		},
+
+		_getCDRsByDate: function(fromDate, toDate, callback, pageStartKey) {
+			debugger;
+			var self = this,
+				filters = {
+					'page_size': 50,
+					'created_from': monster.util.dateToBeginningOfGregorianDay(fromDate),
+					'created_to': monster.util.dateToEndOfGregorianDay(toDate)
+				};
+
+			if(pageStartKey) {
+				filters['start_key'] = pageStartKey;
+			}
+
+			self.callApi({
+				resource: 'cdrs.listByInteraction',
+				data: {
+					accountId: self.accountId,
+					filters: filters
+				},
+				success: function(data, status) {
+					callback(data.data, data['next_start_key']);
 				}
 			});
 		},
@@ -171,7 +204,7 @@ define(function(require) {
 			});
 		},
 
-		_renderRecordingsList: function($appContainer) {
+		_renderRecordingsList: function() {
 			var self = this;
 			RemoteStorage.getRecordsFiles(function(bucketContent, bucketBaseUrl) {
 				if(!bucketContent.Contents
@@ -181,69 +214,88 @@ define(function(require) {
 					return;
 				}
 
-				var files = bucketContent.Contents.filter(function(file) {
+				self.vars.filesList = bucketContent.Contents.filter(function(file) {
 					return file.Size > 0;
 				});
 
-				self._getCDRs(function(cdrs){
-					var callId,
-						desiredFilename,
-						CDRsWithFilesArr = [],
-						uniqueCallerIdNames = new Set(),
-						minDuration = 0,
-						maxDuration = 0,
-						duration;
+				if(self.settings.dateFilterByRequest) {
+					var dateRange = self._getDatetimeRangeByKey(self.settings.defaultDateRangeKey);
+					self._getCDRsByDate(dateRange[0], dateRange[1],
+						function(cdrs, nextStartKey) {
+							self._renderRecordingsTable(cdrs);
+						});
+				} else {
+					self._getCDRs(function(cdrs) {
+						self._renderRecordingsTable(cdrs);
+					});
+				}
 
-					for(var ci=0, clen=cdrs.length; ci < clen; ci++) {
-						callId = cdrs[ci].call_id;
-						for(var fi=0, flen=files.length; fi < flen; fi++) {
-							desiredFilename = self.settings.filenameTemplate.replace('{{call_id}}', callId);
-							if(files[fi].Key === desiredFilename) {
-								cdrs[ci].recording_file_name = desiredFilename;
-								cdrs[ci].recording_url = files[fi].url;
-								CDRsWithFilesArr.push(cdrs[ci]);
-								uniqueCallerIdNames.add(cdrs[ci]['caller_id_name']);
-
-								duration = parseInt(cdrs[ci].duration_seconds);
-
-								if(!maxDuration || duration > maxDuration) {
-									maxDuration = duration;
-								}
-
-								if(!minDuration || duration < minDuration) {
-									minDuration = duration;
-								}
-
-								break;
-							}
-						}
-
-						/*self._getCDR(cdrs[ci].id, function(data) {
-							console.log(data);
-						})*/
-					}
-
-					console.log('CDRs with Files:');
-					console.log(CDRsWithFilesArr);
-
-					console.log('Unique Caller Id Names:');
-					console.log(uniqueCallerIdNames);
-
-
-					var template = $(monster.template(self, 'recordings-table', {
-						'recordings': CDRsWithFilesArr,
-						'callerIdNames': Array.from(uniqueCallerIdNames),
-						'minDuration': minDuration,
-						'maxDuration': maxDuration
-					}));
-
-					console.log(template);
-
-					$appContainer.find('#recordings-list-container').html(template);
-
-					self._initRecordingsTableBehavior();
-				});
 			});
+		},
+
+		_extractCDRsWithFiles: function(cdrs, files){
+			var self = this,
+				callId,
+				desiredFilename,
+				CDRsWithFilesArr = [];
+
+			for(var ci=0, clen=cdrs.length; ci < clen; ci++) {
+				callId = cdrs[ci].call_id;
+				for(var fi=0, flen=files.length; fi < flen; fi++) {
+					desiredFilename = self.settings.filenameTemplate.replace('{{call_id}}', callId);
+					if(files[fi].Key === desiredFilename) {
+						cdrs[ci].recording_file_name = desiredFilename;
+						cdrs[ci].recording_url = files[fi].url;
+						CDRsWithFilesArr.push(cdrs[ci]);
+						break;
+					}
+				}
+			}
+
+			return CDRsWithFilesArr;
+		},
+
+		_renderRecordingsTable: function(cdrs){
+			var self = this,
+				uniqueCallerIdNames = new Set(),
+				minDuration = 0,
+				maxDuration = 0,
+				duration;
+
+			var CDRsWithFilesArr = self._extractCDRsWithFiles(cdrs, self.vars.filesList);
+
+			for(var i=0, len=CDRsWithFilesArr.length; i<len; i++) {
+				uniqueCallerIdNames.add(CDRsWithFilesArr[i]['caller_id_name']);
+				duration = parseInt(CDRsWithFilesArr[i].duration_seconds);
+
+				if(!maxDuration || duration > maxDuration) {
+					maxDuration = duration;
+				}
+
+				if(!minDuration || duration < minDuration) {
+					minDuration = duration;
+				}
+			}
+
+			console.log('CDRs with Files:');
+			console.log(CDRsWithFilesArr);
+
+			console.log('Unique Caller Id Names:');
+			console.log(uniqueCallerIdNames);
+
+
+			var template = $(monster.template(self, 'recordings-table', {
+				'recordings': CDRsWithFilesArr,
+				'callerIdNames': Array.from(uniqueCallerIdNames),
+				'minDuration': minDuration,
+				'maxDuration': maxDuration
+			}));
+
+			console.log(template);
+
+			self.vars.$appContainer.find('#recordings-list-container').html(template);
+
+			self._initRecordingsTableBehavior();
 		},
 
 		_initDateTimePickers: function() {
@@ -281,7 +333,7 @@ define(function(require) {
 		_initDateTimeFilter: function(table) {
 			var self = this;
 
-			self._setDatetimeRangeByKey('all', table);
+			self._setDatetimeRangeByKey(self.settings.defaultDateRangeKey, table);
 
 			var getDate = function(element) {
 				var date;
@@ -293,25 +345,50 @@ define(function(require) {
 				return date;
 			};
 
+			var updateRecordingsTable = function(){
+				if(self.settings.dateFilterByRequest) {
+
+
+					var dateFrom = $('#date-from').datepicker('getDate');
+					var dateTo = $('#date-to').datepicker('getDate');
+					var timeFromArr = $('#time-from').val().split(':');
+					var timeToArr = $('#time-to').val().split(':');
+
+					dateFrom.setHours(parseInt(timeFromArr[0]), parseInt(timeFromArr[1]));
+					dateTo.setHours(parseInt(timeToArr[0]), parseInt(timeToArr[1]));
+
+					debugger;
+
+					self._getCDRsByDate(dateFrom, dateTo, function(cdrs, nextStartKey) {
+						self._renderRecordingsTable(cdrs);
+					});
+				} else {
+					/*self._getCDRs(function(cdrs) {
+						self._renderRecordingsTable(cdrs);
+					});*/
+					table.draw();
+				}
+			};
+
 			var $dateFrom = $('#date-from');
 			var $dateTo = $('#date-to');
 
 			$dateFrom.on('change keyup', function() {
 				$dateTo.datepicker('option', 'minDate', getDate(this));
-				table.draw();
+				updateRecordingsTable();
 			});
 
 			$dateTo.on('change keyup', function() {
 				$dateFrom.datepicker('option', 'maxDate', getDate(this));
-				table.draw();
+				updateRecordingsTable();
 			});
 
 			$('#time-to').on('change keyup', function() {
-				table.draw();
+				updateRecordingsTable();
 			});
 
 			$('#time-from').on('change keyup', function() {
-				table.draw();
+				updateRecordingsTable();
 			});
 
 			$('.js-set-date-range').on('click', function(e) {
@@ -357,10 +434,9 @@ define(function(require) {
 			});
 		},
 
-		_setDatetimeRangeByKey: function(key, table) {
+		_getDatetimeRangeByKey: function(key) {
 			var startDate = new Date(),
-				endDate = new Date(),
-				self = this;
+				endDate = new Date();
 			switch(key) {
 				case 'last-year':
 					startDate.setFullYear(endDate.getFullYear()-1);
@@ -381,10 +457,17 @@ define(function(require) {
 					startDate = new Date(0);
 			}
 
+			return [startDate, endDate];
+		},
+
+		_setDatetimeRangeByKey: function(key, table) {
+			var self = this;
+			var dateRange = self._getDatetimeRangeByKey(key);
+
 			$('.js-set-date-range').removeClass('date-range-active');
 			$('.js-set-date-range[data-range="' + key + '"]').addClass('date-range-active');
 
-			self._setDatetimeRange(startDate, endDate, table);
+			self._setDatetimeRange(dateRange[0], dateRange[1], table);
 		},
 
 		_setDatetimeRange: function(startDate, endDate, table) {
@@ -441,7 +524,7 @@ define(function(require) {
 			$('#reset-filters').on('click', function(e) {
 				e.preventDefault();
 
-				self._setDatetimeRangeByKey('all', table);
+				self._setDatetimeRangeByKey(self.settings.defaultDateRangeKey, table);
 				$('#direction').val('all');
 				$('#caller-id-name').val('').trigger('chosen:updated');
 
@@ -456,7 +539,8 @@ define(function(require) {
 			})
 		},
 
-		_initDataTablesFilters: function(){
+		_initDataTablesFilters: function() {
+			var self = this;
 			var parseDateTimeValue = function(rawDT) {
 				// rawDT example: '2017-05-25 14:26:00'
 				if(typeof(rawDT) === 'string') {
@@ -465,14 +549,19 @@ define(function(require) {
 				}
 			};
 
+			// reset filters
+			window.jQuery.fn.dataTable.ext.search = [];
+
 			// datetime filter
-			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-				var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
-				var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
-				var evalDate= parseDateTimeValue(data[3]);
-				//console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
-				return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
-			});
+			if(!self.settings.dateFilterByRequest) {
+				window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+					var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
+					var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
+					var evalDate= parseDateTimeValue(data[3]);
+					//console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
+					return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
+				});
+			}
 
 			// direction filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
