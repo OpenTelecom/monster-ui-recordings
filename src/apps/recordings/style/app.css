@@ -2,19 +2,19 @@
 
 /* Override dataTables plugin images to base 64 */
 table.dataTable thead .sorting {
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAkElEQVQoz7XQMQ5AQBCF4dWQSJxC5wwax1Cq1e7BAdxD5SL+Tq/QCM1oNiJidwox0355mXnG/DrEtIQ6azioNZQxI0ykPhTQIwhCR+BmBYtlK7kLJYwWCcJA9M4qdrZrd8pPjZWPtOqdRQy320YSV17OatFC4euts6z39GYMKRPCTKY9UnPQ6P+GtMRfGtPnBCiqhAeJPmkqAAAAAElFTkSuQmCC');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAN9JREFUeNpi/P//PwO1ABMxilasWMFJFcOABrEBqQNAWogaLisCYjMgbiGkkBFfmAFdIw2kbgAxDxD/BWKTiIiIC+S6rBpqEAgwA/FkslwGdJUBkDoDNQQZRANdt4xUl03GYhAItEMjhTjDgIqjgJQNDkvkGBkZi0iOAFIBCw6XVYC8g0cf1nDDFWZ9QPwIh9wRkiIAqPgXkKrEIgVKa7kkpzOo7UfQhGdRkmhzoa4BgS9A3Ep23oS6YhaU2wrkPyU5NtFADRAbA9NWH0GVoHRGCC9fvpyTGHVUTbQAAQYAw9p73eOEjMsAAAAASUVORK5CYII=');
 }
 table.dataTable thead .sorting_asc {
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZ0lEQVQ4y2NgGLKgquEuFxBPAGI2ahhWCsS/gDibUoO0gPgxEP8H4ttArEyuQYxAPBdqEAxPBImTY5gjEL9DM+wTENuQahAvEO9DMwiGdwAxOymGJQLxTyD+jgWDxCMZRsEoGAVoAADeemwtPcZI2wAAAABJRU5ErkJggg==');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIZJREFUeNpi/P//PwO1ABMxilSXMXBSxTCgQWxA6gCQFqKGy4qA2AyIWwgpZMQXZkDXSAOpG0DMA8R/gdjkdhTDBXJdVg01CASYgXgyWS4DusoASJ2BGoIMooGuW0aqyyZjMQgE2qGRQpxhQMVRQMoGhyVy0EghLQJokmhHDRs1bDAZBhBgAHKqHoGZIGgDAAAAAElFTkSuQmCC');
 }
 table.dataTable thead .sorting_desc {
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZUlEQVQ4y2NgGAWjYBSggaqGu5FA/BOIv2PBIPFEUgxjB+IdQPwfC94HxLykus4GiD+hGfQOiB3J8SojEE9EM2wuSJzcsFMG4ttQgx4DsRalkZENxL+AuJQaMcsGxBOAmGvopk8AVz1sLZgg0bsAAAAASUVORK5CYII=');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIZJREFUeNpi/P//PwO1ABMDFcGoYaOG0cMwFmyCqssYKoBUOx590bejGJYR67I+IH6EQ+4INoNwGgZU/AtIVWKR+gvEuSSHGdT2I2jCs4DiF8iNgFyoa0DgCxC3kh2bUFfMgnJbgfynJMcmGqgBYmNopOAHoMKREFZZ+p+TGHWM1CxpAQIMAOGPWHkp/4GhAAAAAElFTkSuQmCC');
 }
 table.dataTable thead .sorting_asc_disabled {
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAW0lEQVQoz2NgoCm4w3Vnwh02wspK7/y6k01Ikdadx3f+37l9RxmfIsY7c4GKQHDiHUbcyhzvvIMq+3THBpci3jv7oIpAcMcdduzKEu/8vPMdDn/eiWQYBYMKAAC3ykIEuYQJUgAAAABJRU5ErkJggg==');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIhJREFUeNpi/P//PwO1ABMxilasWMFJFcOABrEBqQNAWogaLisCYjMgbiGkkBFfmAFdIw2kbgAxDxD/BWKTiIiIC+S6rBpqEAgwA/FkslwGdJUBkDoDNQQZRANdt4xUl03GYhAItEMjhTjDgIqjgJQNDkvkGBkZi0iOAJok2lHDRg0bTIYBBBgAXmcmZf5xFh8AAAAASUVORK5CYII=');
 }
 table.dataTable thead .sorting_desc_disabled {
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAWUlEQVQoz2NgGAWDCtyJvPPzznc4/HknEbsy9js77vyHw313eHGZZ3PnE1TRuzuOuK1lvDMRqmzuHUZ87lO+cxuo6PEdLUIeyb7z604pYf+y3Zlwh4u2YQoAc7ZCBHH4jigAAAAASUVORK5CYII=');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIhJREFUeNpi/P//PwO1ABMDFcGoYaOG0cMwFmyCK1asqABS7Xj0RUdERCwj1mV9QPwIh9wRbAbhNAyo+BeQqsQi9ReIc0kOM6jtR9CEZwHFL5AbAblQ14DAFyBuJTs2oa6YBeW2AvlPSY5NNFADxMaMjIx9BFWCCkdCePny5ZzEqGOkZkkLEGAA5p9Ym9BPvZAAAAAASUVORK5CYII=');
 }
 
 /* Override datepicker and timepicker */
@@ -336,11 +336,28 @@ input[type="text"] {
 	margin: 0;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button,
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+.dataTables_wrapper .dataTables_paginate .paginate_button {
 	background: white;
 	border-color: #DEDEDE;
 	padding: 4px 14px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	background: white;
+	border-color: #22A5FF;
+	padding: 4px 14px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.active,
+.dataTables_wrapper .dataTables_paginate .paginate_button.active:hover {
+	background: transparent;
+	border-color: #DEDEDE;
+	cursor: default;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.active a {
+	color: #333333;
+	cursor: default;
 }
 
 select[name="recordings-list_length"] {
