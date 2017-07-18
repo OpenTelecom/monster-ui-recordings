@@ -20,9 +20,6 @@ define(function(require) {
 
 		settings: {
 			aws: {
-				'key': 'AKIAJR52NDF2XDN3ZUFQ',
-				'secret': '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',
-				'bucketName': 'callrecordingtestforcanddi',
 				'bucketRegion': 'eu-west-2',
 				'version': 'latest'
 			},
@@ -96,8 +93,6 @@ define(function(require) {
 				args = pArgs || {};
 				self.vars.$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
 
-			RemoteStorage.init('aws', self.settings.aws);
-
 			var template = $(monster.template(self, 'layout', {
 				user: monster.apps.auth.currentUser
 			}));
@@ -108,7 +103,59 @@ define(function(require) {
 					.fadeIn();
 			});
 
-			self._renderRecordingsList();
+			self.callApi({
+				resource: 'storage.get',
+				data: {
+					accountId: self.accountId,
+					removeMetadataAPI: true
+				},
+				success: function(data, status) {
+					console.log('Storage data:');
+					console.log(data);
+
+					try {
+						if(data.data.attachments.handler === 's3') {
+							self.settings.aws.bucketName = data.data.attachments.settings.bucket;
+							self.settings.aws.key = data.data.attachments.settings.key;
+							self.settings.aws.secret = data.data.attachments.settings.secret;
+
+							RemoteStorage.init('aws', self.settings.aws);
+						}
+					} catch(e) {
+						alert('Error: ' + e.name + ":" + e.message + "\n" + e.stack); // (3) <--
+					}
+
+					self._renderRecordingsList();
+				}
+			});
+		},
+
+		_createS3settings: function(bucket, key, secret, callback) {
+			var self = this;
+
+			self.callApi({
+				resource: 'storage.add',
+				data: {
+					accountId: self.accountId,
+					removeMetadataAPI: true,
+					data: {
+						attachments: {
+							handler: 's3',
+							name: 'S3 Storage',
+							settings: {
+								bucket: bucket,
+								key: key,
+								secret: secret
+							}
+						}
+					}
+				},
+				success: function(data, status) {
+					if(typeof(callback) === 'function') {
+						callback(data);
+					}
+				}
+			});
 		},
 
 		_getCDRs: function(callback) {
