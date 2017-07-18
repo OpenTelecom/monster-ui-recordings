@@ -3,7 +3,7 @@
 const INSTALLER_SRC_DIR = 'recordings-installer';
 const PROJECT_FILES_ZIP_NAME = 'src.zip';
 const INSTALLER_ZIP_NAME = 'recordings-installer.zip';
-const OUTPUT_DIR = 'dist';
+const OUTPUT_DIR = 'dist/';
 
 var gulp = require('gulp'),
 	zip = require('gulp-zip'),
