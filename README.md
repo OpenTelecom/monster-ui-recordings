@@ -26,6 +26,6 @@ user@ubuntu:/var/www/html/monster-ui/recordins-installer$ gulp
 6. Remove installer folder
 ```bash
 user@ubuntu:/var/www/html/monster-ui/recordins-installer$ cd ..
-user@ubuntu:/var/www/html/monster-ui$ rm -rf recordings-installer
+user@ubuntu:/var/www/html/monster-ui$ rm -rf recordings-installer && rm -rf recordings-installer.zip
 ```
 7. Register Recordings app
