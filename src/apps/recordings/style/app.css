@@ -1,4 +1,5 @@
 @import url('../../../css/vendor/jquery/jquery.dataTables.css');
+@import url('../submodules/storageManager/storageManager.css');
 
 /* Override dataTables plugin images to base 64 */
 table.dataTable thead .sorting {
@@ -358,6 +359,15 @@ input[type="text"] {
 .dataTables_wrapper .dataTables_paginate .paginate_button.active a {
 	color: #333333;
 	cursor: default;
+}
+
+h1 .settings-btn {
+	display: inline-block;
+	float: right;
+}
+
+h1 .settings-btn i {
+	font-size: 29px;
 }
 
 select[name="recordings-list_length"] {

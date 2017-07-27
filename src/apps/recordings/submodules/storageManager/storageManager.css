@@ -1,0 +1,145 @@
+@import "../../../../css/partials/base";
+
+.storage-manager-wrapper {
+	padding: 10px 10px;
+	margin-bottom: 15px;
+	background: white;
+}
+
+.storage-manager-wrapper .empty-storage {
+	border: 1px dashed #999;
+	height: 320px;
+	text-align: center;
+}
+
+.storage-manager-wrapper .empty-storage button {
+	margin-top: 25px;
+}
+
+.storage-manager-wrapper .empty-storage i.main-icon {
+	margin-top: 60px;
+	font-size: 72px;
+}
+
+.storage-manager-wrapper .empty-storage .main-title {
+	font-size: 18px;
+	margin-top: 40px;
+}
+
+.storage-manager-wrapper .empty-storage .sub-title {
+	color: #909099;
+	margin-top: 5px;
+}
+
+.storage-manager-wrapper .storage-choice .logo-header {
+	width: 118px;
+	height: 40px;
+}
+
+.storage-manager-wrapper .storage-provider-wrapper {
+	max-width: 608px;
+	width: 49%;
+	display: inline-block;
+	vertical-align: top;
+	margin: 6px;
+	opacity: 0.6;
+}
+
+.storage-manager-wrapper .storage-provider-wrapper.active-storage,
+.storage-manager-wrapper .storage-provider-wrapper:hover {
+	opacity: 1;
+}
+
+.storage-manager-wrapper .storage-provider-wrapper button {
+	margin-right: 10px;
+}
+
+.storage-manager-wrapper .storage-choice {
+	background: #FFF;
+	border: 1px solid #D0D0D9;
+	border-radius: 2px;
+	height: 53px;
+	line-height: 53px;
+	padding: 10px 25px 5px;
+}
+
+.storage-manager-wrapper .storage-choice .check-icon-wrapper {
+	width: 22px;
+	display: inline-block;
+	min-height: 25px;
+	vertical-align: 7px;
+	margin-right: 15px;
+	visibility: hidden;
+}
+
+.storage-provider-wrapper.active-storage .storage-choice .check-icon-wrapper {
+	visibility: visible;
+}
+
+.storage-provider-wrapper:hover .storage-choice .check-icon-wrapper {
+	visibility: visible;
+	opacity: 0.4;
+	/*webkit-animation: blinker 2s linear infinite;
+	animation: blinker 2s linear infinite; */
+}
+
+.storage-manager-wrapper .storage-choice .check-icon {
+	font-size: 25px;
+}
+
+.storage-manager-wrapper .active-storage .storage-choice .check-icon {
+	color: #22A5FF;
+}
+
+.storage-provider-wrapper .storage-choice .check-icon-wrapper:hover .check-icon {
+	color: #22A5FF;
+}
+
+.storage-manager-wrapper .storage-choice .right-section {
+	float: right;
+	line-height: 25px;
+	padding-top: 7px;
+}
+
+.storage-manager-wrapper .storage-choice .edit-storage-link {
+	font-size: 25px;
+	vertical-align: middle;
+}
+
+.storage-manager-wrapper .storage-choice .edit-storage-link:hover {
+	color: #22A5FF;
+}
+
+.storage-manager-wrapper .storage-choice .storage-name {
+	font-weight: 600;
+	margin-top: 13px;
+	text-align: right;
+	margin-right: 11px;
+}
+
+.storage-manager-wrapper .storage-choice .folder-icon {
+	color: #D0D0D9;
+	font-size: 20px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+.storage-manager-wrapper .storage-choice .edit-path {
+	color: #505059;
+	cursor: pointer;
+	font-size: 20px;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
+.storage-manager-wrapper .storage-choice #path {
+	margin: 0 5px;
+}
+
+.storage-manager-wrapper .storage-choice .custom-path {
+	display: inline-block;
+}
+
+@keyframes blinker {
+	50% { opacity: 0; }
+}

@@ -1,0 +1,64 @@
+<div id="storage_manager_wrapper" class="storage-manager-wrapper">
+	{{#compare countAttachments ">" 0}}
+		{{#each plans}}
+			<div class="storage-provider-wrapper active-storage" data-plan="{{extra.type}}"{{#if extra.isConfigured}} data-path="{{params.folder_path}}"{{/if}}>
+				{{#if @root.displayPlanName}}
+					<div class="plan-name">{{ extra.type }}</div>
+				{{/if}}
+
+				{{#if extra.isConfigured}}
+					<div class="storage-choice">
+						<a href="" class="js-select-storage select-storage-link check-icon-wrapper">
+							<i class="check-icon fa fa-check-circle"></i>
+						</a>
+						<svg class="logo-header"><use xlink:href="#{{#compare extra.detailAttachment.handler "===" "s3"}}aws{{else}}g-drive{{/compare}}--color" /></svg>
+						<div class="right-section">
+							<span class="storage-name">{{ extra.detailAttachment.name }}</span>
+							<a class="js-edit-storage edit-storage-link" href="#"><i class="fa fa-pencil-square-o"></i></a>
+						</div>
+					</div>
+				{{else}}
+					<div class="empty-storage">
+						<i class="icon-telicon-configuration main-icon"></i>
+						<div class="main-title">{{ @root.i18n.storagePlanManager.mainTitleWithPlans }}</div>
+						<div class="sub-title">{{ replaceVar @root.i18n.storagePlanManager.subTitleWithPlans @root.countAttachments }}</div>
+						<button class="monster-button-primary choose-plan">{{ @root.i18n.storagePlanManager.chooseButton }}</button>
+					</div>
+				{{/if}}
+			</div>
+
+
+			<div class="storage-provider-wrapper" data-plan="{{extra.type}}"{{#if extra.isConfigured}} data-path="{{params.folder_path}}"{{/if}}>
+				{{#if @root.displayPlanName}}
+					<div class="plan-name">{{ extra.type }}</div>
+				{{/if}}
+
+				{{#if extra.isConfigured}}
+					<div class="storage-choice">
+						<a href="" class="js-select-storage check-icon-wrapper">
+							<i class="check-icon fa fa-check-circle"></i>
+						</a>
+						<svg class="logo-header"><use xlink:href="#{{#compare extra.detailAttachment.handler "===" "s3"}}aws{{else}}g-drive{{/compare}}--color" /></svg>
+						<div class="right-section">
+							<span class="storage-name">{{ extra.detailAttachment.name }}</span>
+							<a class="js-edit-storage edit-storage-link" href="#"><i class="fa fa-pencil-square-o"></i></a>
+						</div>
+					</div>
+				{{else}}
+					<div class="empty-storage">
+						<i class="icon-telicon-configuration main-icon"></i>
+						<div class="main-title">{{ @root.i18n.storagePlanManager.mainTitleWithPlans }}</div>
+						<div class="sub-title">{{ replaceVar @root.i18n.storagePlanManager.subTitleWithPlans @root.countAttachments }}</div>
+						<button class="monster-button-primary choose-plan">{{ @root.i18n.storagePlanManager.chooseButton }}</button>
+					</div>
+				{{/if}}
+			</div>
+		{{/each}}
+	{{else}}
+		<div class="empty-storage">
+			<i class="icon-telicon-configuration main-icon"></i>
+			<div class="main-title">{{ @root.i18n.storagePlanManager.mainTitleNoPlans }}</div>
+			<div class="sub-title">{{ @root.i18n.storagePlanManager.subTitleNoPlans }}</div>
+		</div>
+	{{/compare}}
+</div>

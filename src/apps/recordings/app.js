@@ -10,11 +10,16 @@ define(function(require) {
 		'datatables.net-bs',
 		'datatables.net-buttons',
 		'datatables.net-buttons-html5',
-		'datatables.net-buttons-bootstrap'
+		'datatables.net-buttons-bootstrap',
+		'./submodules/storageManager/storageManager'
 	]);
 
 	var app = {
 		name: 'recordings',
+
+		subModules: [
+			'storageManager'
+		],
 
 		css: [ 'app' ],
 
@@ -113,42 +118,88 @@ define(function(require) {
 					console.log('Storage data:');
 					console.log(data);
 
-					try {
-						if(data.data.attachments.handler === 's3') {
-							self.settings.aws.bucketName = data.data.attachments.settings.bucket;
-							self.settings.aws.key = data.data.attachments.settings.key;
-							self.settings.aws.secret = data.data.attachments.settings.secret;
+					var storageUUID = localStorage.getItem('storageUUID');
+					var storageAttachment;
 
+					try {
+						if(!storageUUID
+							|| storageUUID && !data.data.attachments.hasOwnProperty(storageUUID)) {
+							storageUUID = Object.keys(data.data.attachments)[0];
+							localStorage.setItem('storageUUID', storageUUID);
+						}
+
+						storageAttachment = data.data.attachments[storageUUID];
+
+						if(storageAttachment && storageAttachment.handler === 's3') {
+							self.settings.aws.bucketName = storageAttachment.settings.bucket;
+							self.settings.aws.key = storageAttachment.settings.key;
+							self.settings.aws.secret = storageAttachment.settings.secret;
 							RemoteStorage.init('aws', self.settings.aws);
 						}
 					} catch(e) {
 						alert('Error: ' + e.name + ":" + e.message + "\n" + e.stack); // (3) <--
 					}
 
+					/*self._createS3settings(function(data){
+						console.log(data);
+					});*/
 					self._renderRecordingsList();
+					//self._renderStorageSettings();
 				}
 			});
 		},
 
-		_createS3settings: function(bucket, key, secret, callback) {
-			var self = this;
+/*		_renderStorageSettings: function() {
+			monster.pub('common.storageSelector.render');
 
-			self.callApi({
-				resource: 'storage.add',
-				data: {
-					accountId: self.accountId,
-					removeMetadataAPI: true,
-					data: {
-						attachments: {
-							handler: 's3',
-							name: 'S3 Storage',
-							settings: {
-								bucket: bucket,
-								key: key,
-								secret: secret
+			monster.pub('common.storagePlanManager.render', {
+				container: $('.storage-settings')
+			});
+		},*/
+
+		_generateUUID: function() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			});
+		},
+
+		_createS3settings: function(callback) {
+			var self = this;
+			var uuid = self._generateUUID();
+
+			var storageData = {
+				"attachments": {},
+				"plan": {
+					"modb": {
+						"types": {
+							"call_recording": {
+								"attachments": {
+									"handler": uuid
+								}
 							}
 						}
 					}
+				}
+			};
+
+			storageData.attachments[uuid] = {
+				"handler": "s3",
+				"name": "S3 Storage",
+				"settings": {
+					bucket: 'callrecordingtestforcanddi',
+					key: 'AKIAJR52NDF2XDN3ZUFQ',
+					secret: '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'
+				}
+			};
+
+
+			self.callApi({
+				resource: 'storage.update',
+				data: {
+					accountId: self.accountId,
+					removeMetadataAPI: true,
+					data: storageData
 				},
 				success: function(data, status) {
 					if(typeof(callback) === 'function') {
@@ -190,7 +241,6 @@ define(function(require) {
 		},
 
 		_getCDRsByDate: function(fromDate, toDate, callback, pageStartKey) {
-			debugger;
 			var self = this,
 				filters = {
 					'page_size': 50,
@@ -343,6 +393,29 @@ define(function(require) {
 			self.vars.$appContainer.find('#recordings-list-container').html(template);
 
 			self._initRecordingsTableBehavior();
+			self._initSettingsButtonBehavior();
+		},
+
+		_initSettingsButtonBehavior: function() {
+			var self = this;
+
+			self.vars.$appContainer.find('.js-show-settings').on('click', function(e) {
+				e.preventDefault();
+				/*monster.pub('recordings.storageManager.render', {
+					container: $('.storage-settings'),
+					accountId: self.accountId
+				});*/
+
+				monster.pub('recordings.storageManager.render', {
+					callback: function(data) {
+						console.log(data);
+					}
+				});
+			});
+
+			//TODO: remove it after development:
+			$('.js-show-settings').click();
+
 		},
 
 		_initDateTimePickers: function() {
@@ -403,8 +476,6 @@ define(function(require) {
 
 					dateFrom.setHours(parseInt(timeFromArr[0]), parseInt(timeFromArr[1]));
 					dateTo.setHours(parseInt(timeToArr[0]), parseInt(timeToArr[1]));
-
-					debugger;
 
 					self._getCDRsByDate(dateFrom, dateTo, function(cdrs, nextStartKey) {
 						self._renderRecordingsTable(cdrs);
