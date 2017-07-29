@@ -1,9 +1,23 @@
-@import "../../../../css/partials/base";
+a.btn .fa {
+	margin-right: 5px;
+	vertical-align: -1px;
+}
+
+a.btn:hover .fa {
+	color: #22A5FF;
+}
 
 .storage-manager-wrapper {
-	padding: 10px 10px;
+	padding: 15px 20px;
 	margin-bottom: 15px;
-	background: white;
+}
+
+.storage-manager-wrapper h3 {
+	color: #555;
+	font-weight: normal;
+	line-height: 1;
+	font-size: 22px;
+	margin: 5px 0 13px;
 }
 
 .storage-manager-wrapper .empty-storage {
@@ -34,15 +48,16 @@
 .storage-manager-wrapper .storage-choice .logo-header {
 	width: 118px;
 	height: 40px;
+	vertical-align: -8px;
 }
 
 .storage-manager-wrapper .storage-provider-wrapper {
-	max-width: 608px;
+	opacity: 0.6;
+	max-width: 596px;
 	width: 49%;
 	display: inline-block;
 	vertical-align: top;
-	margin: 6px;
-	opacity: 0.6;
+	margin: 6px 12px 6px 0;
 }
 
 .storage-manager-wrapper .storage-provider-wrapper.active-storage,
@@ -58,16 +73,14 @@
 	background: #FFF;
 	border: 1px solid #D0D0D9;
 	border-radius: 2px;
-	height: 53px;
-	line-height: 53px;
-	padding: 10px 25px 5px;
+	line-height: 46px;
+	padding: 7px 25px 7px;
 }
 
 .storage-manager-wrapper .storage-choice .check-icon-wrapper {
 	width: 22px;
 	display: inline-block;
-	min-height: 25px;
-	vertical-align: 7px;
+	vertical-align: 5px;
 	margin-right: 15px;
 	visibility: hidden;
 }
@@ -83,25 +96,55 @@
 	animation: blinker 2s linear infinite; */
 }
 
+.storage-provider-wrapper.active-storage:hover .storage-choice .check-icon-wrapper {
+	opacity: 1;
+}
+
 .storage-manager-wrapper .storage-choice .check-icon {
 	font-size: 25px;
 }
 
-.storage-manager-wrapper .active-storage .storage-choice .check-icon {
+.storage-manager-wrapper .active-storage .storage-choice a .check-icon {
 	color: #22A5FF;
+	opacity: 1;
 }
 
-.storage-provider-wrapper .storage-choice .check-icon-wrapper:hover .check-icon {
+.storage-provider-wrapper .storage-choice a:hover .check-icon {
 	color: #22A5FF;
 }
 
 .storage-manager-wrapper .storage-choice .right-section {
 	float: right;
 	line-height: 25px;
-	padding-top: 7px;
+	padding-top: 13px;
 }
 
-.storage-manager-wrapper .storage-choice .edit-storage-link {
+.storage-manager-wrapper .storage-choice .right-section a {
+	margin-left: 11px;
+}
+
+.storage-manager-wrapper .storage-choice .right-section a.remove-storage-link {
+	position: relative;
+	top: -2px;
+}
+
+.storage-manager-wrapper .storage-choice .right-section a:hover .fa {
+	color: #22A5FF;
+}
+
+.storage-manager-wrapper .storage-choice .right-section a:hover .fa {
+	color: #22A5FF;
+}
+
+.storage-manager-wrapper .active-storage .select-storage-link:hover .fa {
+	color: #555;
+}
+
+.storage-manager-wrapper .storage-choice .right-section a.remove-storage-link:hover .fa {
+	color: #ff0009;
+}
+
+.storage-manager-wrapper .storage-choice a .fa {
 	font-size: 25px;
 	vertical-align: middle;
 }
@@ -114,7 +157,6 @@
 	font-weight: 600;
 	margin-top: 13px;
 	text-align: right;
-	margin-right: 11px;
 }
 
 .storage-manager-wrapper .storage-choice .folder-icon {
@@ -138,6 +180,21 @@
 
 .storage-manager-wrapper .storage-choice .custom-path {
 	display: inline-block;
+}
+
+.storage-provider-wrapper .storage-item-settings {
+	padding-top: 10px;
+}
+
+.storage-provider-wrapper .storage-item-settings > .row-fluid {
+	border-top: 1px solid #D0D0D9;
+	padding-top: 18px;
+}
+
+.storage-item-settings input[type="text"],
+.storage-item-settings input[type="password"] {
+	border-right: 1px solid #F5F5F5;
+	border-bottom: 1px solid #F5F5F5;
 }
 
 @keyframes blinker {

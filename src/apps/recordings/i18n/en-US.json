@@ -44,6 +44,10 @@
 				"text": "Reset filters"
 			}
 			
+		},
+		"storageManager": {
+			"title": "Storage settings",
+			"newStorageBtnText": "New storage"
 		}
 	}
 }
