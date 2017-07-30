@@ -62,6 +62,8 @@ define(function(require) {
 					generateError: false
 				},
 				success: function(data) {
+					console.log('Storage Data:');
+					console.log(data);
 					callback(data.data);
 				},
 				error: function(data, error, globalHandler) {
@@ -120,7 +122,7 @@ define(function(require) {
 		storageManagerBind: function(template, args, data) {
 			var self = this;
 
-			template.find('.remove-settings').on('click', function() {
+			/*template.find('.remove-settings').on('click', function() {
 				var type = $(this).parents('.storage-provider-wrapper').data('plan');
 
 				monster.ui.confirm(self.i18n.active().storagePlanManager.confirmDeleteText, function() {
@@ -136,9 +138,9 @@ define(function(require) {
 					title: self.i18n.active().storagePlanManager.confirmDeleteTitle,
 					confirmButtonText: self.i18n.active().storagePlanManager.confirmDelete
 				});
-			});
+			});*/
 
-			template.find('.choose-plan').on('click', function() {
+			/*template.find('.choose-plan').on('click', function() {
 				var type = $(this).parents('.storage-provider-wrapper').data('plan'),
 					update = function() {
 						monster.pub('common.storageSelector.render', {
@@ -176,13 +178,29 @@ define(function(require) {
 				} else {
 					update();
 				}
-			});
+			});*/
 
-			template.on('click', '.edit-path', function() {
+			/*template.on('click', '.edit-path', function() {
 				var $parent = $(this).parents('.storage-provider-wrapper');
 				if (!$parent.find('.path-wrapper').length) {
-					self.storagePlanManagerEditPath($parent);
+					self.storageManagerEditPath($parent);
 				}
+			});*/
+
+			template.on('click', '.js-edit-storage', function() {
+				alert('open settings!');
+			});
+
+			template.on('click', '.js-remove-storage', function() {
+				alert('remove storage item!');
+			});
+
+			template.on('click', '.js-create-storage', function() {
+				alert('create storage!');
+			});
+
+			template.on('click', '.js-set-default-storage', function() {
+				alert('set default storage!');
 			});
 		}
 	};

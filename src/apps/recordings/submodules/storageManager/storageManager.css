@@ -197,6 +197,10 @@ a.btn:hover .fa {
 	border-bottom: 1px solid #F5F5F5;
 }
 
+.storage-item-settings .buttons-wrapper {
+	text-align: center;
+}
+
 @keyframes blinker {
 	50% { opacity: 0; }
 }
