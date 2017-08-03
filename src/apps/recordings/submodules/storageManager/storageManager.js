@@ -188,7 +188,55 @@ define(function(require) {
 			});*/
 
 			template.on('click', '.js-edit-storage', function() {
-				alert('open settings!');
+				var $editStorageBtn = $(this);
+				self.storageManagerGetStorage(function(data) {
+					debugger;
+
+					/*var data = {
+						"attachments": {
+							"15757ae3-88bb-4a63-af51-96685962f6c1": {
+								"handler": "s3",
+								"name": "S3 Storage",
+								"settings": {
+									"bucket": "callrecordingtestforcanddi",
+									"key": "AKIAJR52NDF2XDN3ZUFQ",
+									"secret": "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"
+								}
+							}
+						},
+						"plan": {"modb": {"types": {"call_recording": {"attachments": {"handler": "15757ae3-88bb-4a63-af51-96685962f6c1"}}}}},
+						"id": "65aca0e9430a05e2ef4fa6af2f54de5a"
+					};*/
+
+					var $container = $editStorageBtn.closest('.js-storage-item')
+						.find('.js-item-settings-wrapper')
+						.hide();
+
+					var uuid = $editStorageBtn.closest('.js-storage-item').data('uuid');
+
+					if(data.attachments.hasOwnProperty(uuid)) {
+						var storageData = data.attachments[uuid];
+					}
+
+					var template = $(self.getTemplate({
+						name: 'item-settings',
+						submodule: 'storageManager',
+						data: {
+							bucket: storageData.settings.bucket,
+							key: storageData.settings.key,
+							secret: storageData.settings.secret
+						}
+					}));
+
+					$container.empty()
+						.append(template);
+
+					$container.slideDown();
+
+					// TODO: init buttons behavior
+					self.storageManagerSettingsBind($container);
+
+				})
 			});
 
 			template.on('click', '.js-remove-storage', function() {
@@ -202,6 +250,16 @@ define(function(require) {
 			template.on('click', '.js-set-default-storage', function() {
 				alert('set default storage!');
 			});
+		},
+		storageManagerSettingsBind: function($settingsContainer) {
+			$settingsContainer.find('.js-cancel').on('click', function(e) {
+				e.preventDefault();
+				$settingsContainer.slideUp(400, function(){
+					$settingsContainer.empty();
+				});
+			});
+
+			// TODO: save btn
 		}
 	};
 

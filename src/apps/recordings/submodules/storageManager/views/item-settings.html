@@ -3,26 +3,26 @@
 		<div class="span12">
 			<form class="form-horizontal s3-settings">
 				<label class="control-group">
-					<span class="control-label">Bucket name</span>
+					<span class="control-label">{{ @root.i18n.recordings.storageManager.itemSettings.bucketLabel }}</span>
 					<div class="controls">
-						<input type="text" name="bucket">
+						<input type="text" value="{{bucket}}" name="bucket">
 					</div>
 				</label>
 				<label class="control-group">
-					<span class="control-label">Key</span>
+					<span class="control-label">{{ @root.i18n.recordings.storageManager.itemSettings.keyLabel }}</span>
 					<div class="controls">
-						<input type="text" name="key">
+						<input type="text" value="{{key}}" name="key">
 					</div>
 				</label>
 				<label class="control-group">
-					<span class="control-label">Secret</span>
+					<span class="control-label">{{ @root.i18n.recordings.storageManager.itemSettings.secretLabel }}</span>
 					<div class="controls">
-						<input type="text" name="secret">
+						<input type="text" value="{{secret}}" name="secret">
 					</div>
 				</label>
 				<div class="buttons-wrapper clearfix">
-					<button type="submit" class="btn btn-primary js-save" >Save Changes</button>
-					<button type="button" class="btn js-cancel">Cancel</button>
+					<button type="submit" class="btn btn-primary js-save" >{{ @root.i18n.recordings.storageManager.itemSettings.saveBtnText }}</button>
+					<button type="button" class="btn js-cancel">{{ @root.i18n.recordings.storageManager.itemSettings.cancelBtnText }}</button>
 				</div>
 			</form>
 		</div>

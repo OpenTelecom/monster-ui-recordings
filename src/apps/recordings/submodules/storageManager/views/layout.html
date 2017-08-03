@@ -2,7 +2,7 @@
 	<h3>{{ @root.i18n.recordings.storageManager.title }}</h3>
 	{{#compare countAttachments ">" 0}}
 		{{#each plans}}
-			<div class="storage-provider-wrapper active-storage" data-plan="{{extra.type}}"{{#if extra.isConfigured}} data-uuid="{{attachments.handler}}" data-path="{{params.folder_path}}"{{/if}}>
+			<div class="js-storage-item storage-provider-wrapper active-storage" data-plan="{{extra.type}}"{{#if extra.isConfigured}} data-uuid="{{attachments.handler}}" data-path="{{params.folder_path}}"{{/if}}>
 				{{#if @root.displayPlanName}}
 					<div class="plan-name">{{ extra.type }}</div>
 				{{/if}}
