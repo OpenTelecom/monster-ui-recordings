@@ -18,16 +18,18 @@ define(function(require) {
 				callback = args.callback;
 
 			self.storageManagerGetData(args, function(data) {
-				var formattedData = self.storageManagerFormatData(data, args);
-				console.log('formattedData');
-				console.log(formattedData);
+				var storagesList = self.storageManagerFormatData(data.storage);
+				console.log('Storages List:');
+				console.log(storagesList);
 				var template = $(self.getTemplate({
 						name: 'layout',
 						submodule: 'storageManager',
-						data: formattedData
+						data: {
+							storages: storagesList
+						}
 					}));
 
-				self.storageManagerBind(template, args, formattedData);
+				self.storageManagerBind(template, args, storagesList);
 
 				$(parent).empty()
 					.append(template);
@@ -76,47 +78,34 @@ define(function(require) {
 			});
 		},
 
-		storageManagerFormatData: function(data, args) {
-			var formattedData = {
-					countAttachments: data.storage && data.storage.hasOwnProperty('attachments') ? _.size(data.storage.attachments) : 0,
-					plans: []
-				},
-				forceTypes = args.hasOwnProperty('forceTypes') ? args.forceTypes : [],
-				hideOtherTypes = args.hasOwnProperty('hideOtherTypes') ? args.hideOtherTypes : false,
-				plansNotFound = args.hasOwnProperty('forceTypes') ? [].concat(args.forceTypes) : [];
+		storageManagerFormatData: function(data) {
+			var activeStorageId = null;
+			try {
+				activeStorageId = data.plan.modb.types.call_recording.attachments.handler;
+			} catch(e) {
+				console.log('Active storage not found');
+			}
+			var itemData;
+			var storagesList = [];
+			if(data.hasOwnProperty('attachments') && Object.keys(data.attachments).length > 0) {
+				var attachments = data.attachments;
+				for(var i in attachments) if(attachments.hasOwnProperty(i)) {
+					itemData = {
+						id: i,
+						type: attachments[i].handler,
+						name: attachments[i].name,
+						settings: attachments[i].settings,
+						isActive: false
+					};
 
-			if (data.storage && data.storage.hasOwnProperty('plan') && data.storage.plan.hasOwnProperty('modb') && data.storage.plan.modb.hasOwnProperty('types')) {
-				_.each(data.storage.plan.modb.types, function(plan, planType) {
-					// If we allow display of all types, or if not, if the plan is included in the forced types to display
-					if (!hideOtherTypes || forceTypes.indexOf(planType) >= 0) {
-						if (data.storage.attachments.hasOwnProperty(plan.attachments.handler)) {
-							plan.extra = {
-								type: planType,
-								isConfigured: true,
-								detailAttachment: data.storage.attachments[plan.attachments.handler]
-							};
-							formattedData.plans.push(plan);
-
-							// If we added the plan to the list, then we remove it to our array tracking the plans not found
-							if (plansNotFound.indexOf(planType) >= 0) {
-								plansNotFound.splice(plansNotFound.indexOf(planType), 1);
-							}
-						}
+					if(activeStorageId && itemData.id === activeStorageId) {
+						itemData.isActive = true;
 					}
-				});
+					storagesList.push(itemData)
+				}
 			}
 
-			// Finally, if we still have some plans that the user want to edit, but that weren't found in the storage plan, we add them to the list as an unconfigured plan
-			_.each(plansNotFound, function(type) {
-				formattedData.plans.push({
-					extra: {
-						type: type,
-						isConfigured: false
-					}
-				});
-			});
-
-			return formattedData;
+			return storagesList;
 		},
 
 		storageManagerBind: function(template, args, data) {
@@ -190,7 +179,6 @@ define(function(require) {
 			template.on('click', '.js-edit-storage', function() {
 				var $editStorageBtn = $(this);
 				self.storageManagerGetStorage(function(data) {
-					debugger;
 
 					/*var data = {
 						"attachments": {
@@ -230,10 +218,8 @@ define(function(require) {
 
 					$container.empty()
 						.append(template);
-
 					$container.slideDown();
 
-					// TODO: init buttons behavior
 					self.storageManagerSettingsBind($container);
 
 				})
@@ -252,6 +238,8 @@ define(function(require) {
 			});
 		},
 		storageManagerSettingsBind: function($settingsContainer) {
+			var self = this;
+
 			$settingsContainer.find('.js-cancel').on('click', function(e) {
 				e.preventDefault();
 				$settingsContainer.slideUp(400, function(){
@@ -259,7 +247,13 @@ define(function(require) {
 				});
 			});
 
-			// TODO: save btn
+			$settingsContainer.find('.js-save').on('click', function(e) {
+				e.preventDefault();
+				self.storageManagerSaveStorage();
+			});
+		},
+		storageManagerSaveStorage: function(){
+			alert('Save Item Storage');
 		}
 	};
 
