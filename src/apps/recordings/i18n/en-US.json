@@ -49,11 +49,13 @@
 			"title": "Storage settings",
 			"newStorageBtnText": "New storage",
 			"itemSettings": {
+				"nameLabel": "Storage name",
 				"bucketLabel": "Bucket name",
 				"keyLabel": "Key",
 				"secretLabel": "Secret",
 				"saveBtnText": "Save Changes",
-				"cancelBtnText": "Cancel"
+				"cancelBtnText": "Cancel",
+				"successUpdate": "Your Storage Settings were successfully updated!"
 			},
 			
 			

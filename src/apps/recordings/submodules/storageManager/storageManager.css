@@ -137,7 +137,8 @@ a.btn:hover .fa {
 }
 
 .storage-manager-wrapper .active-storage .select-storage-link:hover .fa {
-	color: #555;
+	cursor: default;
+	/*color: #555;*/
 }
 
 .storage-manager-wrapper .storage-choice .right-section a.remove-storage-link:hover .fa {

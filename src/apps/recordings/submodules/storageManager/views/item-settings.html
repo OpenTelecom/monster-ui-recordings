@@ -1,7 +1,13 @@
 <div class="storage-item-settings">
 	<div class="s3 row-fluid">
 		<div class="span12">
-			<form class="form-horizontal s3-settings">
+			<form class="form-horizontal js-storage-settings-form">
+				<label class="control-group">
+					<span class="control-label">{{ @root.i18n.recordings.storageManager.itemSettings.nameLabel }}</span>
+					<div class="controls">
+						<input type="text" value="{{name}}" name="name">
+					</div>
+				</label>
 				<label class="control-group">
 					<span class="control-label">{{ @root.i18n.recordings.storageManager.itemSettings.bucketLabel }}</span>
 					<div class="controls">

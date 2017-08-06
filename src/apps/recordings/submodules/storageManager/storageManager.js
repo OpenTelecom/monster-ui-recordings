@@ -78,6 +78,31 @@ define(function(require) {
 			});
 		},
 
+		storageManagerUpdateStorage: function(storageData, callback) {
+			var self = this;
+
+			self.callApi({
+				resource: 'storage.update',
+				data: {
+					accountId: self.accountId,
+					removeMetadataAPI: true, // or generateError: false
+					data: storageData
+				},
+				success: function(data, status) {
+					if(typeof(callback) === 'function') {
+						callback(data);
+					}
+				},
+				error: function(data, error, globalHandler) {
+					if (error.status === 404) {
+						callback(undefined);
+					} else {
+						globalHandler(data);
+					}
+				}
+			});
+		},
+
 		storageManagerFormatData: function(data) {
 			var activeStorageId = null;
 			try {
@@ -176,7 +201,9 @@ define(function(require) {
 				}
 			});*/
 
-			template.on('click', '.js-edit-storage', function() {
+			template.on('click', '.js-edit-storage', function(e) {
+				e.preventDefault();
+
 				var $editStorageBtn = $(this);
 				self.storageManagerGetStorage(function(data) {
 
@@ -210,6 +237,7 @@ define(function(require) {
 						name: 'item-settings',
 						submodule: 'storageManager',
 						data: {
+							name: storageData.name,
 							bucket: storageData.settings.bucket,
 							key: storageData.settings.key,
 							secret: storageData.settings.secret
@@ -225,18 +253,72 @@ define(function(require) {
 				})
 			});
 
-			template.on('click', '.js-remove-storage', function() {
-				alert('remove storage item!');
+			template.on('click', '.js-remove-storage', function(e) {
+				e.preventDefault();
+				var uuid = $(this).closest('.js-storage-item').data('uuid');
+				monster.ui.alert('remove storage item!');
 			});
 
-			template.on('click', '.js-create-storage', function() {
-				alert('create storage!');
+			template.on('click', '.js-create-storage', function(e) {
+				e.preventDefault();
+				monster.ui.alert('create storage!');
 			});
 
-			template.on('click', '.js-set-default-storage', function() {
-				alert('set default storage!');
+			template.on('click', '.js-set-default-storage', function(e) {
+				e.preventDefault();
+				var uuid = $(this).closest('.js-storage-item').data('uuid');
+				var isAlreadyActive = $(this).closest('.js-storage-item').hasClass('active-storage');
+
+				if(isAlreadyActive) {
+					monster.ui.alert('This storage is already active');
+				} else {
+					self.storageManagerSetDefaultStorage(uuid);
+				}
 			});
 		},
+
+		storageManagerSetDefaultStorage: function(uuid) {
+			var self = this;
+
+			self.storageManagerGetStorage(function(data) {
+				if(!data || typeof(data) === 'undefined') {
+					data = {};
+				}
+
+				var resultData = {};
+				if(data.hasOwnProperty('attachments')) {
+					resultData.attachments = data.attachments;
+				}
+				if(data.hasOwnProperty('plan')) {
+					resultData.plan = data.plan;
+				}
+
+				var newData = {
+					plan: {
+						modb: {
+							types: {
+								call_recording: {
+									attachments: {
+										handler: uuid
+									}
+								}
+							}
+						}
+					}
+				};
+
+				// Merge newData into data
+				$.extend(resultData, newData);
+
+				self.storageManagerUpdateStorage(resultData, function() {
+					$('#storage_manager_wrapper').find('.js-storage-item')
+						.removeClass('active-storage');
+
+					$('.js-storage-item[data-uuid="' + uuid + '"]').addClass('active-storage');
+				})
+			})
+		},
+
 		storageManagerSettingsBind: function($settingsContainer) {
 			var self = this;
 
@@ -249,11 +331,90 @@ define(function(require) {
 
 			$settingsContainer.find('.js-save').on('click', function(e) {
 				e.preventDefault();
-				self.storageManagerSaveStorage();
+
+				var $storageItem = $(this).closest('.js-storage-item');
+
+				var storageData = {
+					type: $storageItem.data('storage-type'),
+					uuid: $storageItem.data('uuid')
+				};
+
+				var $form = $storageItem.find('.js-storage-settings-form');
+
+				if(storageData.type === 's3') {
+					storageData.name = $form.find('input[name="name"]').val();
+					storageData.bucket = $form.find('input[name="bucket"]').val();
+					storageData.key = $form.find('input[name="key"]').val();
+					storageData.secret = $form.find('input[name="secret"]').val();
+				}
+
+				self.storageManagerSaveStorage(storageData);
 			});
 		},
-		storageManagerSaveStorage: function(){
-			alert('Save Item Storage');
+		storageManagerSaveStorage: function(saveData) {
+			/*{
+				type: 's3',
+				uuid: 'sdfsdfsdfsdf',
+				bucket: '',
+				key: '',
+				secret: '',
+				name: ''
+			};*/
+
+			var self = this;
+
+			self.storageManagerGetStorage(function(storagesData) {
+				if(!storagesData || typeof(storagesData) === 'undefined') {
+					storagesData = {};
+				}
+
+				var resultData = {};
+				if(storagesData.hasOwnProperty('attachments')) {
+					resultData.attachments = storagesData.attachments;
+				}
+				if(storagesData.hasOwnProperty('plan')) {
+					resultData.plan = storagesData.plan;
+				}
+
+				/* var data = {
+					"attachments": {
+						"15757ae3-88bb-4a63-af51-96685962f6c1": {
+							"handler": "s3",
+							"name": "S3 Storage",
+							"settings": {
+								"bucket": "callrecordingtestforcanddi",
+								"key": "AKIAJR52NDF2XDN3ZUFQ",
+								"secret": "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"
+							}
+						}
+					},
+					"plan": {"modb": {"types": {"call_recording": {"attachments": {"handler": "15757ae3-88bb-4a63-af51-96685962f6c1"}}}}},
+					"id": "65aca0e9430a05e2ef4fa6af2f54de5a"
+				};*/
+
+				if(saveData.type === 's3') {
+					var newData = {
+						'attachments': {}
+					};
+					newData.attachments[saveData.uuid] = {
+						'handler': 's3',
+						'name': saveData.name,
+						'settings': {
+							'bucket': saveData.bucket,
+							'key': saveData.key,
+							'secret': saveData.secret
+						}
+					}
+				}
+
+				// Merge newData into data
+				$.extend(resultData, newData);
+
+				// TODO: uncomment this
+				self.storageManagerUpdateStorage(resultData, function() {
+					monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
+				});
+			})
 		}
 	};
 
