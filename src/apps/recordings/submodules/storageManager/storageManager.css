@@ -61,12 +61,14 @@ a.btn:hover .fa {
 }
 
 .storage-manager-wrapper .storage-provider-wrapper.active-storage,
+.storage-manager-wrapper .storage-provider-wrapper.new-storage-item,
 .storage-manager-wrapper .storage-provider-wrapper:hover {
 	opacity: 1;
 }
 
 .storage-manager-wrapper .storage-provider-wrapper button {
 	margin-right: 10px;
+	font-size: 14px;
 }
 
 .storage-manager-wrapper .storage-choice {
@@ -117,6 +119,8 @@ a.btn:hover .fa {
 	float: right;
 	line-height: 25px;
 	padding-top: 13px;
+	z-index: 10;
+	position: relative;
 }
 
 .storage-manager-wrapper .storage-choice .right-section a {
@@ -203,6 +207,68 @@ a.btn:hover .fa {
 .storage-item-settings .buttons-wrapper {
 	text-align: center;
 }
+
+.storage-settings .ui-tabs {
+	border: none;
+	background: none;
+	padding: 0;
+}
+
+.storage-settings .ui-tabs .ui-tabs-nav {
+	background: none;
+	border: none;
+	padding: 0;
+}
+
+.storage-settings .ui-tabs .ui-tabs-panel {
+	padding-bottom: 0;
+}
+
+.storage-settings .ui-tabs .ui-tabs-nav li {
+	border: 0;
+	border-radius: 0;
+	background: #9B9B9B;
+	margin: 0;
+	width: 50%;
+}
+
+.storage-settings .ui-tabs .ui-tabs-nav li.ui-tabs-active,
+.storage-settings .ui-tabs .ui-tabs-nav li.ui-tabs-active.ui-state-hover {
+	border: none;
+	border-radius: 0;
+	margin: 0;
+	background: white;
+}
+
+.storage-settings .ui-tabs .ui-tabs-nav li.ui-state-hover {
+	background: #CDCDCD;
+	border: none;
+}
+
+.storage-settings .ui-tabs .ui-tabs-nav li a {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.new-storage-item .storage-choice {
+	padding: 0;
+}
+
+.new-storage-item .storage-item-settings {
+	padding: 0 0 15px;
+}
+
+.new-storage-item .logo-header {
+	display: block;
+	margin: 0 auto;
+}
+
+.new-storage-item .tab-content {
+	background: none;
+	border: none;
+}
+
+
 
 @keyframes blinker {
 	50% { opacity: 0; }

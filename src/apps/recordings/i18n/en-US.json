@@ -57,6 +57,10 @@
 				"cancelBtnText": "Cancel",
 				"successUpdate": "Your Storage Settings were successfully updated!"
 			},
+			"newItem": {
+				"saveNewItemText": "Create",
+				"cancelBtnText": "Cancel"
+			},
 			
 			
 			"changeButton": "Change Storage Option",

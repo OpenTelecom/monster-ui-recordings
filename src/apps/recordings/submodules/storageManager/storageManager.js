@@ -261,7 +261,8 @@ define(function(require) {
 
 			template.on('click', '.js-create-storage', function(e) {
 				e.preventDefault();
-				monster.ui.alert('create storage!');
+				//monster.ui.alert('create storage!');
+				self.storageManagerShowNewItemPanel();
 			});
 
 			template.on('click', '.js-set-default-storage', function(e) {
@@ -274,6 +275,36 @@ define(function(require) {
 				} else {
 					self.storageManagerSetDefaultStorage(uuid);
 				}
+			});
+		},
+
+		storageManagerShowNewItemPanel: function(){
+			var self = this;
+
+			var template = $(self.getTemplate({
+				name: 'new-item',
+				submodule: 'storageManager'
+			}));
+
+			self.storageManagerNewItemBind(template);
+
+			$('.js-storage-items').append(template);
+			$('.js-new-storage-tabs').tabs();
+		},
+
+		storageManagerNewItemBind: function(template) {
+			var self = this;
+
+			template.on('click', '.js-save', function (e) {
+				e.preventDefault();
+				alert('Save item!');
+			});
+
+			template.on('click', '.js-cancel', function (e) {
+				e.preventDefault();
+				$('.js-new-storage-item').slideUp(400, function(){
+					$('.js-new-storage-item').remove();
+				});
 			});
 		},
 
@@ -352,15 +383,6 @@ define(function(require) {
 			});
 		},
 		storageManagerSaveStorage: function(saveData) {
-			/*{
-				type: 's3',
-				uuid: 'sdfsdfsdfsdf',
-				bucket: '',
-				key: '',
-				secret: '',
-				name: ''
-			};*/
-
 			var self = this;
 
 			self.storageManagerGetStorage(function(storagesData) {
@@ -407,10 +429,8 @@ define(function(require) {
 					}
 				}
 
-				// Merge newData into data
 				$.extend(resultData, newData);
 
-				// TODO: uncomment this
 				self.storageManagerUpdateStorage(resultData, function() {
 					monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
 				});
