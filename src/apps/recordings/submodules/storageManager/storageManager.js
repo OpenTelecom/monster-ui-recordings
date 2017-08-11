@@ -136,92 +136,11 @@ define(function(require) {
 		storageManagerBind: function(template, args, data) {
 			var self = this;
 
-			/*template.find('.remove-settings').on('click', function() {
-				var type = $(this).parents('.storage-provider-wrapper').data('plan');
-
-				monster.ui.confirm(self.i18n.active().storagePlanManager.confirmDeleteText, function() {
-					self.storageManagerDeletePlan(type, function(updatedStorage) {
-						if (args.hasOwnProperty('onRemove')) {
-							args.onRemove(updatedStorage);
-						} else {
-							self.storageManagerRender(args);
-						}
-					});
-				}, undefined, {
-					type: 'warning',
-					title: self.i18n.active().storagePlanManager.confirmDeleteTitle,
-					confirmButtonText: self.i18n.active().storagePlanManager.confirmDelete
-				});
-			});*/
-
-			/*template.find('.choose-plan').on('click', function() {
-				var type = $(this).parents('.storage-provider-wrapper').data('plan'),
-					update = function() {
-						monster.pub('common.storageSelector.render', {
-							callback: function(attachment) {
-								self.storageManagerUpdatePlan(type, attachment, function(updatedStorage) {
-									toastr.success(self.i18n.active().storagePlanManager.successUpdate);
-
-									if (!hasExistingPlan && args.hasOwnProperty('onAdd')) {
-										args.onAdd(updatedStorage);
-									} else {
-										if (args.hasOwnProperty('onUpdate')) {
-											args.onUpdate(updatedStorage);
-										} else {
-											self.storagePlanManagerRender(args);
-										}
-									}
-								});
-							}
-						});
-					},
-					hasExistingPlan = _.filter(data.plans, function(v) {
-							if (v.extra.type === type && v.extra.isConfigured === true) {
-								return true;
-							}
-						}).length > 0;
-
-				if (hasExistingPlan) {
-					monster.ui.confirm(self.i18n.active().storagePlanManager.confirmChange, function() {
-						update();
-					}, undefined, {
-						type: 'warning',
-						title: self.i18n.active().storagePlanManager.confirmTitle,
-						confirmButtonText: self.i18n.active().storagePlanManager.confirmYes
-					});
-				} else {
-					update();
-				}
-			});*/
-
-			/*template.on('click', '.edit-path', function() {
-				var $parent = $(this).parents('.storage-provider-wrapper');
-				if (!$parent.find('.path-wrapper').length) {
-					self.storageManagerEditPath($parent);
-				}
-			});*/
-
 			template.on('click', '.js-edit-storage', function(e) {
 				e.preventDefault();
 
 				var $editStorageBtn = $(this);
 				self.storageManagerGetStorage(function(data) {
-
-					/*var data = {
-						"attachments": {
-							"15757ae3-88bb-4a63-af51-96685962f6c1": {
-								"handler": "s3",
-								"name": "S3 Storage",
-								"settings": {
-									"bucket": "callrecordingtestforcanddi",
-									"key": "AKIAJR52NDF2XDN3ZUFQ",
-									"secret": "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"
-								}
-							}
-						},
-						"plan": {"modb": {"types": {"call_recording": {"attachments": {"handler": "15757ae3-88bb-4a63-af51-96685962f6c1"}}}}},
-						"id": "65aca0e9430a05e2ef4fa6af2f54de5a"
-					};*/
 
 					var $container = $editStorageBtn.closest('.js-storage-item')
 						.find('.js-item-settings-wrapper')
@@ -256,12 +175,22 @@ define(function(require) {
 			template.on('click', '.js-remove-storage', function(e) {
 				e.preventDefault();
 				var uuid = $(this).closest('.js-storage-item').data('uuid');
-				monster.ui.alert('remove storage item!');
+				monster.ui.confirm(self.i18n.active().recordings.storageManager.confirmDeleteText, function() {
+					self.storageManagerDeleteStorage(uuid, function() {
+						$('.js-storage-item[data-uuid="' + uuid + '"]').slideUp(400, function() {
+							$(this).remove();
+						});
+						monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
+					});
+				}, undefined, {
+					type: 'warning',
+					title: self.i18n.active().recordings.storageManager.confirmDeleteTitle,
+					confirmButtonText: self.i18n.active().recordings.storageManager.confirmDelete
+				});
 			});
 
 			template.on('click', '.js-create-storage', function(e) {
 				e.preventDefault();
-				//monster.ui.alert('create storage!');
 				self.storageManagerShowNewItemPanel();
 			});
 
@@ -289,6 +218,7 @@ define(function(require) {
 			self.storageManagerNewItemBind(template);
 
 			$('.js-storage-items').append(template);
+			$('.js-new-storage-item').hide().slideDown(400, function(){});
 			$('.js-new-storage-tabs').tabs();
 		},
 
@@ -297,7 +227,31 @@ define(function(require) {
 
 			template.on('click', '.js-save', function (e) {
 				e.preventDefault();
-				alert('Save item!');
+
+				var $tab = $(this).closest('.js-tab-content-item');
+
+				var storageData = {};
+				if($tab.data('type') === 'aws') {
+					storageData.name = $tab.find('input[name="name"]').val();
+					storageData.bucket = $tab.find('input[name="bucket"]').val();
+					storageData.key = $tab.find('input[name="key"]').val();
+					storageData.secret = $tab.find('input[name="secret"]').val();
+					storageData.type = 's3';
+				}
+				storageData.uuid = self.storageManagerGenerateUUID();
+
+				self.storageManagerSaveStorage(storageData);
+
+				if($tab.find('input[name="set_default"]').is(':checked')) {
+					self.storageManagerSetDefaultStorage(storageData.uuid);
+				}
+
+				// TODO!
+				$('.storage-settings').html('<div>Please wait for update!</div>');
+
+				window.setTimeout(function(){
+					self.storageManagerReload();
+				}, 3000);
 			});
 
 			template.on('click', '.js-cancel', function (e) {
@@ -306,6 +260,10 @@ define(function(require) {
 					$('.js-new-storage-item').remove();
 				});
 			});
+		},
+
+		storageManagerReload: function() {
+			this.storageManagerRender();
 		},
 
 		storageManagerSetDefaultStorage: function(uuid) {
@@ -382,6 +340,36 @@ define(function(require) {
 				self.storageManagerSaveStorage(storageData);
 			});
 		},
+
+		storageManagerDeleteStorage: function(uuid, callback) {
+			var self = this;
+
+			self.storageManagerGetStorage(function(storagesData) {
+				var resultData = {};
+				if(storagesData.hasOwnProperty('attachments')) {
+					resultData.attachments = storagesData.attachments;
+				}
+				if(storagesData.hasOwnProperty('plan')) {
+					resultData.plan = storagesData.plan;
+				}
+
+				if(resultData.attachments && resultData.attachments.hasOwnProperty(uuid)) {
+					delete resultData.attachments[uuid];
+				}
+
+				try {
+					if(resultData.plan.modb.types.call_recording.attachments.handler === uuid) {
+						resultData.plan.modb.types.call_recording.attachments.handler = '';
+					}
+				} catch (e) {}
+
+				self.storageManagerUpdateStorage(resultData, function() {
+					if(typeof(callback) === 'function') {
+						callback();
+					}
+				});
+			})
+		},
 		storageManagerSaveStorage: function(saveData) {
 			var self = this;
 
@@ -398,22 +386,6 @@ define(function(require) {
 					resultData.plan = storagesData.plan;
 				}
 
-				/* var data = {
-					"attachments": {
-						"15757ae3-88bb-4a63-af51-96685962f6c1": {
-							"handler": "s3",
-							"name": "S3 Storage",
-							"settings": {
-								"bucket": "callrecordingtestforcanddi",
-								"key": "AKIAJR52NDF2XDN3ZUFQ",
-								"secret": "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"
-							}
-						}
-					},
-					"plan": {"modb": {"types": {"call_recording": {"attachments": {"handler": "15757ae3-88bb-4a63-af51-96685962f6c1"}}}}},
-					"id": "65aca0e9430a05e2ef4fa6af2f54de5a"
-				};*/
-
 				if(saveData.type === 's3') {
 					var newData = {
 						'attachments': {}
@@ -429,12 +401,18 @@ define(function(require) {
 					}
 				}
 
-				$.extend(resultData, newData);
+				$.extend(true, resultData, newData);
 
 				self.storageManagerUpdateStorage(resultData, function() {
 					monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
 				});
 			})
+		},
+		storageManagerGenerateUUID: function() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			});
 		}
 	};
 
