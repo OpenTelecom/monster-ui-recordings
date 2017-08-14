@@ -1,8 +1,10 @@
 <h1>
 	{{@root.i18n.recordings.title}}
-	<a href="" class="settings-btn js-toggle-settings">
-		<i class="fa fa-cog icon-small"></i>
-	</a>
+	{{#if isAdmin}}
+		<a href="" class="settings-btn js-toggle-settings">
+			<i class="fa fa-cog icon-small"></i>
+		</a>
+	{{/if}}
 </h1>
 <div id="recordings_wrapper" class="hero-unit well">
 	<div class="js-storages-settings storages-settings" style="display: none;"></div>

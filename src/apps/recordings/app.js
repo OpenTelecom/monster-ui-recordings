@@ -99,7 +99,8 @@ define(function(require) {
 				self.vars.$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
 
 			var template = $(monster.template(self, 'layout', {
-				user: monster.apps.auth.currentUser
+				user: monster.apps.auth.currentUser,
+				isAdmin: monster.util.isAdmin()
 			}));
 
 			self.vars.$appContainer.fadeOut(function() {

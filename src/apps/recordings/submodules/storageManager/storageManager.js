@@ -17,6 +17,11 @@ define(function(require) {
 				parent = args.parent || $('.js-storages-settings'),
 				callback = args.callback;
 
+			if(!monster.util.isAdmin()) {
+				console.log('Permission error. Use admin account for change storage settings');
+				return;
+			}
+
 			self.storageManagerGetData(args, function(data) {
 				var storagesList = self.storageManagerFormatData(data.storage);
 				console.log('Storages List:');
@@ -84,6 +89,11 @@ define(function(require) {
 
 		storageManagerUpdateStorage: function(storageData, callback) {
 			var self = this;
+
+			if(!monster.util.isAdmin()) {
+				console.log('Permission error. Use admin account for change storage settings');
+				return;
+			}
 
 			self.callApi({
 				resource: 'storage.update',
@@ -280,6 +290,11 @@ define(function(require) {
 		storageManagerSetDefaultStorage: function(uuid) {
 			var self = this;
 
+			if(!monster.util.isAdmin()) {
+				console.log('Permission error. Use admin account for change storage settings');
+				return;
+			}
+
 			self.storageManagerGetStorage(function(data) {
 				if(!data || typeof(data) === 'undefined') {
 					data = {};
@@ -360,6 +375,11 @@ define(function(require) {
 		storageManagerDeleteStorage: function(uuid, callback) {
 			var self = this;
 
+			if(!monster.util.isAdmin()) {
+				console.log('Permission error. Use admin account for change storage settings');
+				return;
+			}
+
 			self.storageManagerGetStorage(function(storagesData) {
 				var resultData = {};
 				if(storagesData.hasOwnProperty('attachments')) {
@@ -388,6 +408,11 @@ define(function(require) {
 		},
 		storageManagerSaveStorage: function(saveData, callback) {
 			var self = this;
+
+			if(!monster.util.isAdmin()) {
+				console.log('Permission error. Use admin account for change storage settings');
+				return;
+			}
 
 			self.storageManagerGetStorage(function(storagesData) {
 				if(!storagesData || typeof(storagesData) === 'undefined') {

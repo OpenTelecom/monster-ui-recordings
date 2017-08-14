@@ -16,6 +16,10 @@ a.btn:hover .fa {
 	margin-bottom: 15px;
 }
 
+.storage-manager-wrapper .storage-items-list {
+	margin-bottom: 10px;
+}
+
 .storage-manager-wrapper h3 {
 	color: #555;
 	font-weight: normal;
