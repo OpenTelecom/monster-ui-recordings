@@ -50,6 +50,10 @@ li.ui-timepicker-selected,
 }
 
 /* App styles*/
+.core-content .app-layout .app-content-wrapper {
+	padding-top: 20px;
+}
+
 label {
 	font-size: 17px;
 }

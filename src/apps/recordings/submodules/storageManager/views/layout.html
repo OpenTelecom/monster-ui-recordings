@@ -10,7 +10,7 @@
 						</a>
 						<svg class="logo-header"><use xlink:href="#{{#compare type "===" "s3"}}aws{{else}}g-drive{{/compare}}--color" /></svg>
 						<div class="right-section">
-							<span class="storage-name">{{ name }}</span>
+							<span class="js-storage-name storage-name">{{ name }}</span>
 							<a class="js-edit-storage edit-storage-link" href="#"><i class="fa fa-pencil-square-o"></i></a>
 							<a class="js-remove-storage remove-storage-link" href="#"><i class="fa fa-trash-o"></i></a>
 						</div>
@@ -20,10 +20,14 @@
 			{{/each}}
 		{{/compare}}
 	</div>
-	<div>
+	<div class="js-storage-msg-box"></div>
+	<div class="buttons-wrapper">
 		<a href="" class="js-create-storage btn">
 			<i class="fa fa-plus"></i>
 			{{ @root.i18n.recordings.storageManager.newStorageBtnText }}
+		</a>
+		<a href="" class="js-hide-settings dynamic-link">
+			{{ @root.i18n.recordings.storageManager.hideSettings }}
 		</a>
 	</div>
 </div>

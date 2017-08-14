@@ -14,7 +14,7 @@ define(function(require) {
 		storageManagerRender: function(pArgs) {
 			var self = this,
 				args = pArgs || {},
-				parent = args.parent || $('.storage-settings'),
+				parent = args.parent || $('.js-storages-settings'),
 				callback = args.callback;
 
 			self.storageManagerGetData(args, function(data) {
@@ -32,7 +32,11 @@ define(function(require) {
 				self.storageManagerBind(template, args, storagesList);
 
 				$(parent).empty()
-					.append(template);
+					.append(template).hide().slideDown();
+
+				if(typeof(callback) === 'function') {
+					callback(data);
+				}
 			});
 		},
 
@@ -168,7 +172,6 @@ define(function(require) {
 					$container.slideDown();
 
 					self.storageManagerSettingsBind($container);
-
 				})
 			});
 
@@ -180,7 +183,7 @@ define(function(require) {
 						$('.js-storage-item[data-uuid="' + uuid + '"]').slideUp(400, function() {
 							$(this).remove();
 						});
-						monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
+						self.storageManagerShowMessage(self.i18n.active().recordings.storageManager.successRemovingMessage);
 					});
 				}, undefined, {
 					type: 'warning',
@@ -200,10 +203,17 @@ define(function(require) {
 				var isAlreadyActive = $(this).closest('.js-storage-item').hasClass('active-storage');
 
 				if(isAlreadyActive) {
-					monster.ui.alert('This storage is already active');
+					self.storageManagerShowMessage(self.i18n.active().recordings.storageManager.alreadyActiveMessage, 'warning')
 				} else {
 					self.storageManagerSetDefaultStorage(uuid);
 				}
+			});
+
+			template.on('click', '.js-hide-settings', function(e) {
+				e.preventDefault();
+				$('.js-storages-settings').slideUp(400, function(){
+					$(this).empty();
+				});
 			});
 		},
 
@@ -240,18 +250,17 @@ define(function(require) {
 				}
 				storageData.uuid = self.storageManagerGenerateUUID();
 
-				self.storageManagerSaveStorage(storageData);
+				var isNeedSetDefault = $tab.find('input[name="set_default"]').is(':checked');
 
-				if($tab.find('input[name="set_default"]').is(':checked')) {
-					self.storageManagerSetDefaultStorage(storageData.uuid);
-				}
+				self.storageManagerSaveStorage(storageData, function(){
+					if(isNeedSetDefault) {
+						self.storageManagerSetDefaultStorage(storageData.uuid);
+					}
 
-				// TODO!
-				$('.storage-settings').html('<div>Please wait for update!</div>');
-
-				window.setTimeout(function(){
-					self.storageManagerReload();
-				}, 3000);
+					self.storageManagerReload(function(){
+						self.storageManagerShowMessage(self.i18n.active().recordings.storageManager.successSavingMessage, 'success');
+					});
+				});
 			});
 
 			template.on('click', '.js-cancel', function (e) {
@@ -262,8 +271,10 @@ define(function(require) {
 			});
 		},
 
-		storageManagerReload: function() {
-			this.storageManagerRender();
+		storageManagerReload: function(callback) {
+			this.storageManagerRender({
+				callback: callback
+			});
 		},
 
 		storageManagerSetDefaultStorage: function(uuid) {
@@ -337,7 +348,12 @@ define(function(require) {
 					storageData.secret = $form.find('input[name="secret"]').val();
 				}
 
-				self.storageManagerSaveStorage(storageData);
+				self.storageManagerSaveStorage(storageData, function(data) {
+					// update item name
+					$('.js-storage-item[data-uuid="' + storageData.uuid + '"]').find('.js-storage-name').text(storageData.name);
+
+					self.storageManagerShowMessage(self.i18n.active().recordings.storageManager.successUpdate, 'success');
+				});
 			});
 		},
 
@@ -370,7 +386,7 @@ define(function(require) {
 				});
 			})
 		},
-		storageManagerSaveStorage: function(saveData) {
+		storageManagerSaveStorage: function(saveData, callback) {
 			var self = this;
 
 			self.storageManagerGetStorage(function(storagesData) {
@@ -403,16 +419,48 @@ define(function(require) {
 
 				$.extend(true, resultData, newData);
 
-				self.storageManagerUpdateStorage(resultData, function() {
-					monster.ui.alert(self.i18n.active().recordings.storageManager.itemSettings.successUpdate);
-				});
+				self.storageManagerUpdateStorage(resultData, callback);
 			})
 		},
+
 		storageManagerGenerateUUID: function() {
 			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 				return v.toString(16);
 			});
+		},
+
+		storageManagerShowMessage: function(msg, msgType) {
+			var msgTypeClass;
+
+			if(typeof(msgType) === 'undefined') {
+				msgType = 'info';
+			}
+
+			switch(msgType) {
+				case 'warning':
+					msgTypeClass = 'storage-msg-warning';
+					break;
+				case 'success':
+					msgTypeClass = 'storage-msg-success';
+					break;
+				default: // 'info'
+					msgTypeClass = 'storage-msg-info';
+			}
+
+			var $msg = $('<div class="storage-message ' + msgTypeClass + '">' + msg + '</div>')
+				.appendTo($('.js-storage-msg-box')).hide().fadeIn();
+
+			$msg.animate({
+					backgroundColor: '#ffffff'
+				}, 1000
+			);
+
+			window.setTimeout(function(){
+				$msg.fadeOut(400, function() {
+					$msg.remove();
+				})
+			}, 4000);
 		}
 	};
 

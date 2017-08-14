@@ -1,11 +1,11 @@
 <h1>
 	{{@root.i18n.recordings.title}}
-	<a href="" class="settings-btn js-show-settings">
+	<a href="" class="settings-btn js-toggle-settings">
 		<i class="fa fa-cog icon-small"></i>
 	</a>
 </h1>
 <div id="recordings_wrapper" class="hero-unit well">
-	<div class="storage-settings"></div>
+	<div class="js-storages-settings storages-settings" style="display: none;"></div>
 	<h1 style="display: none;">{{ replaceVar @root.i18n.recordings.welcome user.username }}</h1>
 	<p style="display: none">{{ @root.i18n.recordings.description }}</p>
 	<div id="recordings-list-container"></div>

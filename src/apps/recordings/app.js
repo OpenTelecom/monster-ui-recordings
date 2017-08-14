@@ -399,23 +399,27 @@ define(function(require) {
 		_initSettingsButtonBehavior: function() {
 			var self = this;
 
-			self.vars.$appContainer.find('.js-show-settings').on('click', function(e) {
+			self.vars.$appContainer.find('.js-toggle-settings').on('click', function(e) {
 				e.preventDefault();
 				/*monster.pub('recordings.storageManager.render', {
 					container: $('.storage-settings'),
 					accountId: self.accountId
 				});*/
+				var isSettingsHidden = $('.js-storages-settings').is(':hidden');
 
-				monster.pub('recordings.storageManager.render', {
-					callback: function(data) {
-						console.log(data);
-					}
-				});
+				if(isSettingsHidden) {
+					monster.pub('recordings.storageManager.render', {
+						callback: function(data) {
+							console.log(data);
+						}
+					});
+				} else {
+					$('.js-storages-settings').slideUp(400, function(){
+						$(this).empty();
+					});
+				}
+
 			});
-
-			//TODO: remove it after development:
-			$('.js-show-settings').click();
-
 		},
 
 		_initDateTimePickers: function() {
