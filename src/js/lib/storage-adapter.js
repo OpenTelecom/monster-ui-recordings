@@ -12,11 +12,11 @@ define(function(require) {
 	// AWS methods
 	var AWSadapter = {
 		settings: {
-			'key': null, //'AKIAJR52NDF2XDN3ZUFQ',
-			'secret': null, //'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',
-			'bucketName': null, //'callrecordingtestforcanddi',
-			'bucketRegion': null, //'eu-west-2',
-			'version': null //'latest'
+			'key': null,
+			'secret': null,
+			'bucketName': null,
+			'bucketRegion': null,
+			'version': null
 		},
 
 		init: function(params) {
@@ -51,6 +51,9 @@ define(function(require) {
 			}, function (err, bucketContent) {
 				if (err) {
 					methods.log('ERROR: ' + err);
+					if(typeof(callback) === 'function') {
+						callback(null);
+					}
 				} else {
 
 					var baseUrl = this.request.httpRequest.endpoint.href;
@@ -59,21 +62,6 @@ define(function(require) {
 
 					var bucketBaseUrl = baseUrl + AWSadapter.settings.bucketName;
 					console.log(baseUrl + AWSadapter.settings.bucketName);
-
-					/*bucketContent.Contents.forEach(function(file, i, arr) {
-						//bucketContent.Contents[i]['url'] = bucketBaseUrl + '/' + file.Key;
-						if(file.Size > 0) {
-							file['url'] = (bucketBaseUrl + '/' + file.Key).replace(/\s/g, '+');
-						}
-					});*/
-
-					// https://s3.eu-west-2.amazonaws.com/callrecordingtestforcanddi/recordings/gon-gon song - short.mp3
-
-					//s3Client.getResourceUrl("your-bucket", "some-path/some-key.jpg");
-
-					// http(s)://<bucket>.s3.amazonaws.com/<object>
-					// http(s)://s3.amazonaws.com/<bucket>/<object>
-					// https://s3.amazonaws.com/callrecordingtestforcanddi/recordings/gon-gon song - short.mp3
 
 					methods.log(bucketContent);
 

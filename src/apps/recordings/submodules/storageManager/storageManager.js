@@ -17,6 +17,10 @@ define(function(require) {
 				parent = args.parent || $('.js-storages-settings'),
 				callback = args.callback;
 
+			if(pArgs.hasOwnProperty('onSetDefault') && typeof(pArgs.onSetDefault) === 'function') {
+				self.storageManagerOnSetDefault = pArgs.onSetDefault;
+			}
+
 			if(!monster.util.isAdmin()) {
 				console.log('Permission error. Use admin account for change storage settings');
 				return;
@@ -325,14 +329,18 @@ define(function(require) {
 				// Merge newData into data
 				$.extend(resultData, newData);
 
-				self.storageManagerUpdateStorage(resultData, function() {
+				self.storageManagerUpdateStorage(resultData, function(data) {
 					$('#storage_manager_wrapper').find('.js-storage-item')
 						.removeClass('active-storage');
 
 					$('.js-storage-item[data-uuid="' + uuid + '"]').addClass('active-storage');
-				})
+
+					self.storageManagerOnSetDefault(data);
+				});
 			})
 		},
+
+		storageManagerOnSetDefault: function(data) {},
 
 		storageManagerSettingsBind: function($settingsContainer) {
 			var self = this;

@@ -33,8 +33,7 @@ define(function(require) {
 			dateFilterByRequest: false
 		},
 
-		vars: {
-			// temporary variables
+		vars: { // temporary variables
 			$appContainer: null,
 			filesList: null // files list from s3
 		},
@@ -109,105 +108,7 @@ define(function(require) {
 					.fadeIn();
 			});
 
-			self.callApi({
-				resource: 'storage.get',
-				data: {
-					accountId: self.accountId,
-					removeMetadataAPI: true
-				},
-				success: function(data, status) {
-					console.log('Storage data:');
-					console.log(data);
-
-					var storageUUID = localStorage.getItem('storageUUID');
-					var storageAttachment;
-
-					try {
-						if(!storageUUID
-							|| storageUUID && !data.data.attachments.hasOwnProperty(storageUUID)) {
-							storageUUID = Object.keys(data.data.attachments)[0];
-							localStorage.setItem('storageUUID', storageUUID);
-						}
-
-						storageAttachment = data.data.attachments[storageUUID];
-
-						if(storageAttachment && storageAttachment.handler === 's3') {
-							self.settings.aws.bucketName = storageAttachment.settings.bucket;
-							self.settings.aws.key = storageAttachment.settings.key;
-							self.settings.aws.secret = storageAttachment.settings.secret;
-							RemoteStorage.init('aws', self.settings.aws);
-						}
-					} catch(e) {
-						alert('Error: ' + e.name + ":" + e.message + "\n" + e.stack); // (3) <--
-					}
-
-					/*self._createS3settings(function(data){
-						console.log(data);
-					});*/
-					self._renderRecordingsList();
-					//self._renderStorageSettings();
-				}
-			});
-		},
-
-/*		_renderStorageSettings: function() {
-			monster.pub('common.storageSelector.render');
-
-			monster.pub('common.storagePlanManager.render', {
-				container: $('.storage-settings')
-			});
-		},*/
-
-		_generateUUID: function() {
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-				return v.toString(16);
-			});
-		},
-
-		_createS3settings: function(callback) {
-			var self = this;
-			var uuid = self._generateUUID();
-
-			var storageData = {
-				"attachments": {},
-				"plan": {
-					"modb": {
-						"types": {
-							"call_recording": {
-								"attachments": {
-									"handler": uuid
-								}
-							}
-						}
-					}
-				}
-			};
-
-			storageData.attachments[uuid] = {
-				"handler": "s3",
-				"name": "S3 Storage",
-				"settings": {
-					bucket: 'callrecordingtestforcanddi',
-					key: 'AKIAJR52NDF2XDN3ZUFQ',
-					secret: '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'
-				}
-			};
-
-
-			self.callApi({
-				resource: 'storage.update',
-				data: {
-					accountId: self.accountId,
-					removeMetadataAPI: true,
-					data: storageData
-				},
-				success: function(data, status) {
-					if(typeof(callback) === 'function') {
-						callback(data);
-					}
-				}
-			});
+			self._renderRecordingsList();
 		},
 
 		_getCDRs: function(callback) {
@@ -304,30 +205,63 @@ define(function(require) {
 
 		_renderRecordingsList: function() {
 			var self = this;
-			RemoteStorage.getRecordsFiles(function(bucketContent, bucketBaseUrl) {
-				if(!bucketContent.Contents
-					|| typeof(bucketContent.Contents) !== 'object'
-					|| bucketContent.Contents.length === 0) {
-					console.log('No files');
-					return;
-				}
 
-				self.vars.filesList = bucketContent.Contents.filter(function(file) {
-					return file.Size > 0;
-				});
+			self.callApi({
+				resource: 'storage.get',
+				data: {
+					accountId: self.accountId,
+					removeMetadataAPI: true
+				},
+				success: function(data, status) {
+					console.log('Storage data:');
+					console.log(data);
 
-				if(self.settings.dateFilterByRequest) {
-					var dateRange = self._getDatetimeRangeByKey(self.settings.defaultDateRangeKey);
-					self._getCDRsByDate(dateRange[0], dateRange[1],
-						function(cdrs, nextStartKey) {
-							self._renderRecordingsTable(cdrs);
+					try {
+						var storageUUID = data.data.plan.modb.types.call_recording.attachments.handler;
+
+						if(data.data.attachments.hasOwnProperty(storageUUID)) {
+							var storageData = data.data.attachments[storageUUID];
+
+							if(storageData.handler === 's3') {
+								self.settings.aws.bucketName = storageData.settings.bucket;
+								self.settings.aws.key = storageData.settings.key;
+								self.settings.aws.secret = storageData.settings.secret;
+								RemoteStorage.init('aws', self.settings.aws);
+							}
+						}
+					} catch(e) {
+						alert('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
+					}
+
+					RemoteStorage.getRecordsFiles(function(bucketContent, bucketBaseUrl) {
+						if(!bucketContent
+							|| typeof(bucketContent) === 'undefined'
+							|| !bucketContent.Contents
+							|| typeof(bucketContent.Contents) !== 'object'
+							|| bucketContent.Contents.length === 0
+						) {
+							console.log('No files');
+							self._renderRecordingsTable([]);
+							return;
+						}
+
+						self.vars.filesList = bucketContent.Contents.filter(function(file) {
+							return file.Size > 0;
 						});
-				} else {
-					self._getCDRs(function(cdrs) {
-						self._renderRecordingsTable(cdrs);
+
+						if(self.settings.dateFilterByRequest) {
+							var dateRange = self._getDatetimeRangeByKey(self.settings.defaultDateRangeKey);
+							self._getCDRsByDate(dateRange[0], dateRange[1],
+								function(cdrs, nextStartKey) {
+									self._renderRecordingsTable(cdrs);
+								});
+						} else {
+							self._getCDRs(function(cdrs) {
+								self._renderRecordingsTable(cdrs);
+							});
+						}
 					});
 				}
-
 			});
 		},
 
@@ -412,6 +346,9 @@ define(function(require) {
 					monster.pub('recordings.storageManager.render', {
 						callback: function(data) {
 							console.log(data);
+						},
+						onSetDefault: function(){
+							self._renderRecordingsList();
 						}
 					});
 				} else {
