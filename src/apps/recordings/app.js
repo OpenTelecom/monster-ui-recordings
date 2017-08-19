@@ -24,6 +24,7 @@ define(function(require) {
 		css: [ 'app' ],
 
 		settings: {
+			debug: true,
 			aws: {
 				'bucketRegion': 'eu-west-2',
 				'version': 'latest'
@@ -73,9 +74,9 @@ define(function(require) {
 
 		// Entry Point of the app
 		render: function(container) {
-			console.log('render');
-			var self = this,
-				parent = _.isEmpty(container) ? $('#monster-content') : container;
+			var self = this;
+
+			self.log('render');
 
 			monster.ui.generateAppLayout(self, {
 				menus: [
@@ -90,12 +91,19 @@ define(function(require) {
 			});
 		},
 
-		renderIndex: function(pArgs) {
-			console.log('renderIndex');
+		log: function(msg){
+			var self = this;
+			if(self.settings.debug) {
+				console.log(msg);
+			}
+		},
 
+		renderIndex: function(pArgs) {
 			var self = this,
 				args = pArgs || {};
 				self.vars.$appContainer = args.container || $('#recordings_app_container .app-content-wrapper');
+
+			self.log('renderIndex');
 
 			var template = $(monster.template(self, 'layout', {
 				user: monster.apps.auth.currentUser,
@@ -112,8 +120,9 @@ define(function(require) {
 		},
 
 		_getCDRs: function(callback) {
-			console.log('Get CDRs');
 			var self = this;
+
+			self.log('Get CDRs');
 
 			self.callApi({
 				resource: 'cdrs.list',
@@ -121,12 +130,12 @@ define(function(require) {
 					accountId: self.accountId
 				},
 				success: function(data, status) {
-					console.log('CDRs data:');
-					console.log(data);
+					self.log('CDRs data:');
+					self.log(data);
 					var cdrs = data.data;
 
 					if(cdrs.length === 0) {
-						console.log('Warning: No CDRs');
+						self.log('Warning: No CDRs');
 						return;
 					}
 
@@ -136,8 +145,8 @@ define(function(require) {
 				},
 				error: function(data, status) {
 					//_callback({}, uiRestrictions);
-					console.log('get cdrs error data');
-					console.log(data);
+					self.log('get cdrs error data');
+					self.log(data);
 				}
 			});
 		},
@@ -168,7 +177,7 @@ define(function(require) {
 
 		_getCDR: function(cdrId, callback) {
 			var self = this;
-			console.log('Get CDR');
+			self.log('Get CDR');
 			// 'get': { verb: 'GET', url: 'accounts/{accountId}/cdrs/{cdrId}' },
 
 			if(!cdrId || typeof(cdrId) === 'undefined') {
@@ -182,12 +191,12 @@ define(function(require) {
 					cdrId: cdrId
 				},
 				success: function(data, status) {
-					console.log('CDR data:');
-					console.log(data);
+					self.log('CDR data:');
+					self.log(data);
 					var cdr = data.data;
 
 					if(cdr.length === 0) {
-						console.log('Warning: No CDR #' + cdrId);
+						self.log('Warning: No CDR #' + cdrId);
 						return;
 					}
 
@@ -197,8 +206,8 @@ define(function(require) {
 				},
 				error: function(data, status) {
 					//_callback({}, uiRestrictions);
-					console.log('get cdr error');
-					console.log(data);
+					self.log('get cdr error');
+					self.log(data);
 				}
 			});
 		},
@@ -213,8 +222,8 @@ define(function(require) {
 					removeMetadataAPI: true
 				},
 				success: function(data, status) {
-					console.log('Storage data:');
-					console.log(data);
+					self.log('Storage data:');
+					self.log(data);
 
 					try {
 						var storageUUID = data.data.plan.modb.types.call_recording.attachments.handler;
@@ -230,7 +239,7 @@ define(function(require) {
 							}
 						}
 					} catch(e) {
-						alert('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
+						self.log('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
 					}
 
 					RemoteStorage.getRecordsFiles(function(bucketContent, bucketBaseUrl) {
@@ -240,7 +249,7 @@ define(function(require) {
 							|| typeof(bucketContent.Contents) !== 'object'
 							|| bucketContent.Contents.length === 0
 						) {
-							console.log('No files');
+							self.log('No files');
 							self._renderRecordingsTable([]);
 							return;
 						}
@@ -309,11 +318,11 @@ define(function(require) {
 				}
 			}
 
-			console.log('CDRs with Files:');
-			console.log(CDRsWithFilesArr);
+			self.log('CDRs with Files:');
+			self.log(CDRsWithFilesArr);
 
-			console.log('Unique Caller Id Names:');
-			console.log(uniqueCallerIdNames);
+			self.log('Unique Caller Id Names:');
+			self.log(uniqueCallerIdNames);
 
 
 			var template = $(monster.template(self, 'recordings-table', {
@@ -323,7 +332,7 @@ define(function(require) {
 				'maxDuration': maxDuration
 			}));
 
-			console.log(template);
+			self.log(template);
 
 			self.vars.$appContainer.find('#recordings-list-container').html(template);
 
@@ -345,7 +354,7 @@ define(function(require) {
 				if(isSettingsHidden) {
 					monster.pub('recordings.storageManager.render', {
 						callback: function(data) {
-							console.log(data);
+							self.log(data);
 						},
 						onSetDefault: function(){
 							self._renderRecordingsList();
@@ -461,19 +470,21 @@ define(function(require) {
 		},
 
 		_initDirectionFilter: function(table) {
+			var self = this;
 			$('select#direction').on('change', function() {
 				table.draw();
-				console.log('direction redraw');
+				self.log('direction redraw');
 			});
 		},
 
 		_initCallerIdNameFilter: function(table) {
-			var $select = $('#caller-id-name');
+			var $select = $('#caller-id-name'),
+				self = this;
 			$select.chosen();
 
 			$select.on('change', function() {
 				table.draw();
-				console.log('Caller Id Name redraw');
+				self.log('Caller Id Name redraw');
 			});
 		},
 
@@ -618,7 +629,7 @@ define(function(require) {
 					var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
 					var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
 					var evalDate= parseDateTimeValue(data[3]);
-					//console.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
+					//self.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
 					return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
 				});
 			}
