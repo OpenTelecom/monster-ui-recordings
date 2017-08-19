@@ -573,6 +573,10 @@ define(function(require) {
 							return data;
 						},
 						'targets': 3
+					},
+					{
+						'targets'  : 'no-sort',
+						'orderable': false
 					}
 				],
 				dom: 'lfrtipB',
