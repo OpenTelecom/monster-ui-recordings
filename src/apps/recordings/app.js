@@ -114,9 +114,25 @@ define(function(require) {
 				$(this).empty()
 					.append(template)
 					.fadeIn();
+				self._insertSettingsBtn(template);
 			});
 
 			self._renderRecordingsList();
+		},
+
+		_insertSettingsBtn: function(template) {
+			var self = this;
+			if(monster.util.isAdmin()) {
+				$('#settings-btn').insertAfter($('#main_topbar_current_app'));
+				self._initSettingsButtonBehavior();
+			}
+
+			template.on('click', '.js-close-settings', function(e) {
+				e.preventDefault();
+				$('.js-storages-settings').slideUp(400, function(){
+					$(this).find('.js-settings-content').empty();
+				});
+			});
 		},
 
 		_getCDRs: function(callback) {
@@ -337,35 +353,30 @@ define(function(require) {
 			self.vars.$appContainer.find('#recordings-list-container').html(template);
 
 			self._initRecordingsTableBehavior();
-			self._initSettingsButtonBehavior();
 		},
 
 		_initSettingsButtonBehavior: function() {
 			var self = this;
 
-			self.vars.$appContainer.find('.js-toggle-settings').on('click', function(e) {
+			$('#settings-btn').on('click', function(e) {
 				e.preventDefault();
-				/*monster.pub('recordings.storageManager.render', {
-					container: $('.storage-settings'),
-					accountId: self.accountId
-				});*/
-				var isSettingsHidden = $('.js-storages-settings').is(':hidden');
+				var $settingsContainer = $('.js-storages-settings');
 
-				if(isSettingsHidden) {
+				if($settingsContainer.is(':hidden')) {
 					monster.pub('recordings.storageManager.render', {
 						callback: function(data) {
 							self.log(data);
 						},
 						onSetDefault: function(){
 							self._renderRecordingsList();
-						}
+						},
+						container: $settingsContainer.find('.js-settings-content')
 					});
 				} else {
-					$('.js-storages-settings').slideUp(400, function(){
-						$(this).empty();
+					$settingsContainer.slideUp(400, function() {
+						$(this).find('.js-settings-content').empty();
 					});
 				}
-
 			});
 		},
 

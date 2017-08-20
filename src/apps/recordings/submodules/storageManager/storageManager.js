@@ -24,7 +24,7 @@ define(function(require) {
 		storageManagerRender: function(pArgs) {
 			var self = this,
 				args = pArgs || {},
-				parent = args.parent || $('.js-storages-settings'),
+				$container = args.container || $('.js-storages-settings .js-settings-content'),
 				callback = args.callback;
 
 			if(pArgs.hasOwnProperty('onSetDefault') && typeof(pArgs.onSetDefault) === 'function') {
@@ -50,8 +50,8 @@ define(function(require) {
 
 				self.storageManagerBind(template, args, storagesList);
 
-				$(parent).empty()
-					.append(template).hide().slideDown();
+				$container.empty()
+					.append(template).closest('.js-storages-settings').slideDown();
 
 				if(typeof(callback) === 'function') {
 					callback(data);
@@ -231,13 +231,6 @@ define(function(require) {
 				} else {
 					self.storageManagerSetDefaultStorage(uuid);
 				}
-			});
-
-			template.on('click', '.js-hide-settings', function(e) {
-				e.preventDefault();
-				$('.js-storages-settings').slideUp(400, function(){
-					$(this).empty();
-				});
 			});
 		},
 

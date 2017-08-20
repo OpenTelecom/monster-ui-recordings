@@ -21,7 +21,6 @@ define(function(require) {
 
 		init: function(params) {
 			var self = this;
-			// Merge object2 into object1
 			$.extend(self.settings, params);
 
 			self.AWS = window.AWS;
@@ -46,9 +45,7 @@ define(function(require) {
 				}
 			});
 
-			bucket.listObjects({
-				//Prefix: prefix
-			}, function (err, bucketContent) {
+			bucket.listObjects({}, function (err, bucketContent) {
 				if (err) {
 					methods.log('ERROR: ' + err);
 					if(typeof(callback) === 'function') {
@@ -84,7 +81,6 @@ define(function(require) {
 				Key: fileKey
 			}, function(err, data) {
 				if(err) {
-					// an error occurred
 					console.log(err, err.stack);
 				} else {
 					// successful response

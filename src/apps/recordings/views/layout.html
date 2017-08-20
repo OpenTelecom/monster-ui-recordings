@@ -1,14 +1,17 @@
 <h1>
 	{{@root.i18n.recordings.title}}
 	{{#if isAdmin}}
-		<a href="" class="settings-btn js-toggle-settings">
+		<a href="" id="settings-btn" class="settings-btn">
 			<i class="fa fa-cog icon-small"></i>
 		</a>
 	{{/if}}
 </h1>
-<div id="recordings_wrapper" class="hero-unit well">
-	<div class="js-storages-settings storages-settings" style="display: none;"></div>
-	<h1 style="display: none;">{{ replaceVar @root.i18n.recordings.welcome user.username }}</h1>
-	<p style="display: none">{{ @root.i18n.recordings.description }}</p>
+<div id="recordings_wrapper" class="recordings-wrapper hero-unit well">
+	<div class="js-storages-settings storages-settings" style="display: none;">
+		<a href="" class="js-close-settings close-btn">
+			<i class="fa fa-close icon-small"></i>
+		</a>
+		<div class="js-settings-content"></div>
+	</div>
 	<div id="recordings-list-container"></div>
 </div>
