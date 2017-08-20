@@ -4,6 +4,16 @@ define(function(require) {
 		monster = require('monster'),
 		toastr = require('toastr');
 
+	var settings = {
+		debug: true
+	};
+
+	var log = function(msg){
+		if(settings.debug) {
+			console.log(msg);
+		}
+	};
+
 	var storageManager = {
 		requests: {},
 
@@ -22,14 +32,14 @@ define(function(require) {
 			}
 
 			if(!monster.util.isAdmin()) {
-				console.log('Permission error. Use admin account for change storage settings');
+				log('Permission error. Use admin account for change storage settings');
 				return;
 			}
 
 			self.storageManagerGetData(args, function(data) {
 				var storagesList = self.storageManagerFormatData(data.storage);
-				console.log('Storages List:');
-				console.log(storagesList);
+				log('Storages List:');
+				log(storagesList);
 				var template = $(self.getTemplate({
 						name: 'layout',
 						submodule: 'storageManager',
@@ -77,8 +87,8 @@ define(function(require) {
 					generateError: false
 				},
 				success: function(data) {
-					console.log('Storage Data:');
-					console.log(data);
+					log('Storage Data:');
+					log(data);
 					callback(data.data);
 				},
 				error: function(data, error, globalHandler) {
@@ -95,7 +105,7 @@ define(function(require) {
 			var self = this;
 
 			if(!monster.util.isAdmin()) {
-				console.log('Permission error. Use admin account for change storage settings');
+				log('Permission error. Use admin account for change storage settings');
 				return;
 			}
 
@@ -126,7 +136,7 @@ define(function(require) {
 			try {
 				activeStorageId = data.plan.modb.types.call_recording.attachments.handler;
 			} catch(e) {
-				console.log('Active storage not found');
+				log('Active storage not found');
 			}
 			var itemData;
 			var storagesList = [];
@@ -295,7 +305,7 @@ define(function(require) {
 			var self = this;
 
 			if(!monster.util.isAdmin()) {
-				console.log('Permission error. Use admin account for change storage settings');
+				log('Permission error. Use admin account for change storage settings');
 				return;
 			}
 
@@ -384,7 +394,7 @@ define(function(require) {
 			var self = this;
 
 			if(!monster.util.isAdmin()) {
-				console.log('Permission error. Use admin account for change storage settings');
+				log('Permission error. Use admin account for change storage settings');
 				return;
 			}
 
@@ -418,7 +428,7 @@ define(function(require) {
 			var self = this;
 
 			if(!monster.util.isAdmin()) {
-				console.log('Permission error. Use admin account for change storage settings');
+				log('Permission error. Use admin account for change storage settings');
 				return;
 			}
 
