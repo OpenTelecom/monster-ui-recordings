@@ -18,8 +18,8 @@
 		<div class="form-group">
 			<select class="form-control" id="direction">
 				<option value="all" selected>{{i18n.recordings.filters.direction.all}}</option>
-				<option value="outbound">{{i18n.recordings.filters.direction.outbound}}</option>
-				<option value="inbound">{{i18n.recordings.filters.direction.inbound}}</option>
+				<option value="OUT">{{i18n.recordings.filters.direction.outbound}}</option>
+				<option value="IN">{{i18n.recordings.filters.direction.inbound}}</option>
 			</select>
 		</div>
 	</div>
@@ -73,7 +73,7 @@
 	{{#each this.recordings}}
 		<tr>
 			<td>{{inc @index}}</td>
-			<td>{{direction}}</td>
+			<td>{{direction_formatted}}</td>
 			<td>{{caller_id_name}}</td>
 			<td>{{datetime}}</td>
 			<td>{{dialed_number}}</td>

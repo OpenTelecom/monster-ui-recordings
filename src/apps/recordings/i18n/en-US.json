@@ -6,7 +6,7 @@
 		"recordingsTable": {
 			"title": "Recordings",
 			"columnHeader": {
-				"direction": "Direction",
+				"direction": "IN/OUT",
 				"callerIdName": "Caller ID Name",
 				"datetime": "Datetime",
 				"dialerNumber": "Dialer Number",
@@ -29,9 +29,9 @@
 				"lastHour": "last hour"
 			},
 			"direction": {
-				"all": "All directions",
-				"outbound": "Outbound",
-				"inbound": "inbound"
+				"all": "IN/OUT",
+				"outbound": "OUT",
+				"inbound": "IN"
 			},
 			"callerIdName": {
 				"placeholder": "Choose a caller name..."

@@ -150,11 +150,6 @@ define(function(require) {
 					self.log(data);
 					var cdrs = data.data;
 
-					if(cdrs.length === 0) {
-						self.log('Warning: No CDRs');
-						return;
-					}
-
 					if(typeof(callback) === 'function') {
 						callback(cdrs);
 					}
@@ -324,6 +319,15 @@ define(function(require) {
 			for(var i=0, len=CDRsWithFilesArr.length; i<len; i++) {
 				uniqueCallerIdNames.add(CDRsWithFilesArr[i]['caller_id_name']);
 				duration = parseInt(CDRsWithFilesArr[i].duration_seconds);
+
+				// format direction
+				if(CDRsWithFilesArr[i]['direction'] === 'outbound') {
+					CDRsWithFilesArr[i]['direction_formatted'] = 'OUT';
+				} else if(CDRsWithFilesArr[i]['direction'] === 'inbound') {
+					CDRsWithFilesArr[i]['direction_formatted'] = 'IN';
+				} else {
+					CDRsWithFilesArr[i]['direction_formatted'] = CDRsWithFilesArr[i]['direction'];
+				}
 
 				if(!maxDuration || duration > maxDuration) {
 					maxDuration = duration;

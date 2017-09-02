@@ -140,6 +140,10 @@ input[type="text"] {
 	text-align: center;
 }
 
+.recordings-wrapper select#direction {
+	width: auto;
+}
+
 .play-btn {
 	display: inline-block;
 	width: 26px;
