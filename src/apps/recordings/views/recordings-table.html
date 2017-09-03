@@ -36,8 +36,8 @@
 		<div id="duration-slider"></div>
 		<div class="duration-filter-values">
 			<span>{{i18n.recordings.filters.duration.title}} </span>
-			<span id="duration-range-min">{{minDuration}}</span>&nbsp;-&nbsp;
-			<span id="duration-range-max">{{maxDuration}}</span> {{i18n.recordings.filters.duration.seconds}}
+			<span id="duration-range-min" data-seconds="{{duration.min}}">{{duration.minHHMMSS}}</span>&nbsp;-&nbsp;
+			<span id="duration-range-max" data-seconds="{{duration.max}}">{{duration.maxHHMMSS}}</span>
 		</div>
 	</div>
 	<div id="filter-length-box" class="filter-item filter-length">

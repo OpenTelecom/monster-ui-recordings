@@ -36,7 +36,9 @@ define(function(require) {
 
 		vars: { // temporary variables
 			$appContainer: null,
-			filesList: null // files list from s3
+			filesList: null, // files list from s3
+			minDuration: 0,
+			maxDuration: 0
 		},
 
 		i18n: {
@@ -344,12 +346,21 @@ define(function(require) {
 			self.log('Unique Caller Id Names:');
 			self.log(uniqueCallerIdNames);
 
+			self.vars.minDuration = minDuration;
+			self.vars.maxDuration = maxDuration;
+
+			var minDurationHHMMSS = new Date(1000 * minDuration).toISOString().substr(11, 8);
+			var maxDurationHHMMSS = new Date(1000 * maxDuration).toISOString().substr(11, 8);
 
 			var template = $(monster.template(self, 'recordings-table', {
 				'recordings': CDRsWithFilesArr,
 				'callerIdNames': Array.from(uniqueCallerIdNames),
-				'minDuration': minDuration,
-				'maxDuration': maxDuration
+				'duration': {
+					'min': minDuration,
+					'minHHMMSS': minDurationHHMMSS,
+					'max': maxDuration,
+					'maxHHMMSS': maxDurationHHMMSS
+				}
 			}));
 
 			self.log(template);
@@ -504,8 +515,9 @@ define(function(require) {
 		},
 
 		_initDurationFilter: function(table) {
-			var minDuration = parseInt($('#duration-range-min').text());
-			var maxDuration = parseInt($('#duration-range-max').text());
+			var self = this;
+			var minDuration = self.vars.minDuration;
+			var maxDuration = self.vars.maxDuration;
 
 			$('#duration-slider').slider({
 				range: true,
@@ -513,8 +525,17 @@ define(function(require) {
 				max: maxDuration,
 				values: [ minDuration, maxDuration],
 				slide: function( event, ui ) {
-					$('#duration-range-min').text(ui.values[0]);
-					$('#duration-range-max').text(ui.values[1]);
+					var minTime = new Date(1000 * ui.values[0]).toISOString().substr(11, 8);
+					var maxTime = new Date(1000 * ui.values[1]).toISOString().substr(11, 8);
+
+					$('#duration-range-min')
+						.text(minTime)
+						.data('seconds', ui.values[0]);
+
+					$('#duration-range-max')
+						.text(maxTime)
+						.data('seconds', ui.values[1]);
+
 					table.draw();
 				}
 			});
@@ -584,10 +605,18 @@ define(function(require) {
 				},
 				'columnDefs': [
 					{
+						'name': 'datetime',
+						'targets': 3,
 						'render': function (data, type, row) {
 							return data;
-						},
-						'targets': 3
+						}
+					},
+					{
+						'name': 'duration',
+						'targets': 5,
+						'render': function (data, type, row) {
+								return new Date(1000 * data).toISOString().substr(11, 8);
+						}
 					},
 					{
 						'targets'  : 'no-sort',
@@ -622,8 +651,17 @@ define(function(require) {
 				var min = $durationSlider.slider('option', 'min');
 				var max = $durationSlider.slider('option', 'max');
 				$durationSlider.slider('option', 'values', [min, max]);
-				$('#duration-range-min').text(min);
-				$('#duration-range-max').text(max);
+
+				var minHHMMSS = new Date(1000 * min).toISOString().substr(11, 8);
+				var maxHHMMSS = new Date(1000 * max).toISOString().substr(11, 8);
+
+				$('#duration-range-min')
+					.data('seconds', min)
+					.text(minHHMMSS);
+				$('#duration-range-max')
+					.data('seconds', max)
+					.text(maxHHMMSS);
+
 				$('#recordings-list_filter input[type="search"]').val('');
 				table.search('').draw();
 			})
@@ -679,11 +717,14 @@ define(function(require) {
 
 			// duration filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-				var min = parseInt($('#duration-range-min').text());
-				var max = parseInt($('#duration-range-max').text());
-				var eval = parseInt(data[5]);
+				var min = parseInt($('#duration-range-min').data('seconds'));
+				var max = parseInt($('#duration-range-max').data('seconds'));
+				var evalArr = data[5].split(':'); // "00:02:46" to ['00', '02', '46']
+				var evalSeconds = parseInt(evalArr[2]) // seconds
+					+ parseInt(evalArr[1]) * 60 // minutes
+					+ parseInt(evalArr[0]*60*60); // hours
 
-				return (eval >= min && eval <= max);
+				return (evalSeconds >= min && evalSeconds <= max);
 			});
 		},
 
