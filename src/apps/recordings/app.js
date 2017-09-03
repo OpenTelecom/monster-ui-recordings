@@ -596,7 +596,7 @@ define(function(require) {
 				'bStateSave': false,
 				'lengthMenu': [[5, 25, 50, -1], [5, 25, 50, 'All']],
 				'aoColumns': [
-					null, null, null, {'sType': 'date'}, null, null, null, null, null
+					null, null, {'sType': 'date'}, null, null, null, null, null
 				],
 				'initComplete': function(settings, json) {
 					// move filters outside Datatables wrapper in reserved containers
@@ -606,14 +606,14 @@ define(function(require) {
 				'columnDefs': [
 					{
 						'name': 'datetime',
-						'targets': 3,
+						'targets': 2,
 						'render': function (data, type, row) {
 							return data;
 						}
 					},
 					{
 						'name': 'duration',
-						'targets': 5,
+						'targets': 6,
 						'render': function (data, type, row) {
 								return new Date(1000 * data).toISOString().substr(11, 8);
 						}
@@ -631,7 +631,7 @@ define(function(require) {
 
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
-			self._initCallerIdNameFilter(table);
+			//self._initCallerIdNameFilter(table);
 			self._initDurationFilter(table);
 			self._initResetFiltersBtn(table);
 
@@ -685,7 +685,7 @@ define(function(require) {
 				window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 					var datetimeStart = parseDateTimeValue($('#date-from').val() + ' ' + $('#time-from').val() + ':00');
 					var datetimeEnd = parseDateTimeValue($("#date-to").val() + ' ' + $('#time-to').val() + ':00');
-					var evalDate= parseDateTimeValue(data[3]);
+					var evalDate= parseDateTimeValue(data[2]);
 					//self.log(evalDate + ' >= ' + datetimeStart + ' && ' + evalDate + ' <= ' + datetimeEnd);
 					return (evalDate >= datetimeStart && evalDate <= datetimeEnd);
 				});
@@ -699,7 +699,7 @@ define(function(require) {
 			});
 
 			// caller id name filter
-			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			/*window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 				var namesArr = $("#caller-id-name").val();
 				var evalName = data[2];
 				if(!namesArr || typeof(namesArr) === 'undefined' || !evalName) {
@@ -713,13 +713,13 @@ define(function(require) {
 				}
 
 				return false;
-			});
+			});*/
 
 			// duration filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 				var min = parseInt($('#duration-range-min').data('seconds'));
 				var max = parseInt($('#duration-range-max').data('seconds'));
-				var evalArr = data[5].split(':'); // "00:02:46" to ['00', '02', '46']
+				var evalArr = data[6].split(':'); // "00:02:46" to ['00', '02', '46']
 				var evalSeconds = parseInt(evalArr[2]) // seconds
 					+ parseInt(evalArr[1]) * 60 // minutes
 					+ parseInt(evalArr[0]*60*60); // hours
@@ -743,13 +743,13 @@ define(function(require) {
 				});
 			}).addClass('js-handled');
 
-			$('.js-download-audio').not('.js-handled').click(function(e) {
+/*			$('.js-download-audio').not('.js-handled').click(function(e) {
 				var $btn = $(this);
 
 				RemoteStorage.getRecordFileUrl($btn.attr('download'), function(url) {
 					$btn.attr('href', url);
 				});
-			}).addClass('js-handled');
+			}).addClass('js-handled');*/
 		},
 
 		_initHandlebarsHelpers: function() {

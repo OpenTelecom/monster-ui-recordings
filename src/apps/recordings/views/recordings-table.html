@@ -23,7 +23,7 @@
 			</select>
 		</div>
 	</div>
-	<div class="filter-item caller-id-name-filter">
+	<!--<div class="filter-item caller-id-name-filter">
 		<div class="form-group">
 			<select data-placeholder="{{i18n.recordings.filters.callerIdName.placeholder}}" class="form-control" id="caller-id-name" multiple>
 				{{#each this.callerIdNames}}
@@ -31,7 +31,7 @@
 				{{/each}}
 			</select>
 		</div>
-	</div>
+	</div>-->
 	<div class="filter-item duration-filter">
 		<div id="duration-slider"></div>
 		<div class="duration-filter-values">
@@ -56,17 +56,16 @@
 		<tr>
 			<th>№</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.direction}}</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
+			<th>User</th>
+			<th>Device</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
-			<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>
 			<th class="no-sort">
 				{{i18n.recordings.recordingsTable.columnHeader.play}}
 			</th>
-			<th class="no-sort">
-				{{i18n.recordings.recordingsTable.columnHeader.download}}
-			</th>
+			<!--<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>-->
+			<!--<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>-->
 		</tr>
 	</thead>
 	<tbody>
@@ -74,21 +73,18 @@
 		<tr>
 			<td>{{inc @index}}</td>
 			<td>{{direction_formatted}}</td>
-			<td>{{caller_id_name}}</td>
 			<td>{{datetime}}</td>
+			<td>User</td>
+			<td>Device</td>
 			<td>{{dialed_number}}</td>
 			<td>{{duration_seconds}}</td>
-			<td>{{from}}</td>
 			<td>
 				<div class="btn-wrapper">
 					<a class="js-play-audio play-btn" data-filename="{{recording_file_name}}" href=""></a>
 				</div>
 			</td>
-			<td>
-				<div class="btn-wrapper">
-					<a class="js-download-audio download-btn" href="" download="{{recording_file_name}}"></a>
-				</div>
-			</td>
+			<!--<td>{{caller_id_name}}</td>
+			<td>{{from}}</td>-->
 		</tr>
 	{{/each}}
 	</tbody>
