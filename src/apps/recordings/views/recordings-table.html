@@ -23,15 +23,24 @@
 			</select>
 		</div>
 	</div>
-	<!--<div class="filter-item caller-id-name-filter">
+	<div class="filter-item user-name-filter">
 		<div class="form-group">
-			<select data-placeholder="{{i18n.recordings.filters.callerIdName.placeholder}}" class="form-control" id="caller-id-name" multiple>
-				{{#each this.callerIdNames}}
+			<select data-placeholder="{{i18n.recordings.filters.userName.placeholder}}" class="form-control" id="user-name-select" multiple>
+				{{#each this.usersNames}}
 					<option value="{{this}}">{{this}}</option>
 				{{/each}}
 			</select>
 		</div>
-	</div>-->
+	</div>
+	<div class="filter-item device-name-filter">
+		<div class="form-group">
+			<select data-placeholder="{{i18n.recordings.filters.deviceName.placeholder}}" class="form-control" id="device-name-select" multiple>
+				{{#each this.devicesNames}}
+					<option value="{{this}}">{{this}}</option>
+				{{/each}}
+			</select>
+		</div>
+	</div>
 	<div class="filter-item duration-filter">
 		<div id="duration-slider"></div>
 		<div class="duration-filter-values">
@@ -57,15 +66,13 @@
 			<th>№</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.direction}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.datetime}}</th>
-			<th>User</th>
-			<th>Device</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.user}}</th>
+			<th>{{i18n.recordings.recordingsTable.columnHeader.device}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
 			<th class="no-sort">
-				{{i18n.recordings.recordingsTable.columnHeader.play}}
+				{{i18n.recordings.recordingsTable.columnHeader.actions}}
 			</th>
-			<!--<th>{{i18n.recordings.recordingsTable.columnHeader.callerIdName}}</th>-->
-			<!--<th>{{i18n.recordings.recordingsTable.columnHeader.from}}</th>-->
 		</tr>
 	</thead>
 	<tbody>
@@ -74,8 +81,8 @@
 			<td>{{inc @index}}</td>
 			<td>{{direction_formatted}}</td>
 			<td>{{datetime}}</td>
-			<td>User</td>
-			<td>Device</td>
+			<td>{{owner_name}}</td>
+			<td>{{device_name}}</td>
 			<td>{{dialed_number}}</td>
 			<td>{{duration_seconds}}</td>
 			<td>
@@ -83,8 +90,6 @@
 					<a class="js-play-audio play-btn" data-filename="{{recording_file_name}}" href=""></a>
 				</div>
 			</td>
-			<!--<td>{{caller_id_name}}</td>
-			<td>{{from}}</td>-->
 		</tr>
 	{{/each}}
 	</tbody>

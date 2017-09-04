@@ -7,13 +7,12 @@
 			"title": "Recordings",
 			"columnHeader": {
 				"direction": "IN/OUT",
-				"callerIdName": "Caller ID Name",
 				"datetime": "Datetime",
+				"user": "User",
+				"device": "Device",
 				"dialerNumber": "Dialer Number",
-				"duration": "Duration (sec)",
-				"from": "From",
-				"play": "Play",
-				"download": "Download"
+				"duration": "Duration",
+				"actions": "Actions"
 			},
 			"playBtnText": "Play",
 			"downloadBtnText": "Download"
@@ -33,8 +32,11 @@
 				"outbound": "OUT",
 				"inbound": "IN"
 			},
-			"callerIdName": {
-				"placeholder": "Choose a caller name..."
+			"userName": {
+				"placeholder": "Choose a user name..."
+			},
+			"deviceName": {
+				"placeholder": "Choose a device name..."
 			},
 			"duration": {
 				"title": "Duration:",

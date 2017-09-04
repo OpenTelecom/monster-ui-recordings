@@ -140,7 +140,7 @@ define(function(require) {
 		_getCDRs: function(callback) {
 			var self = this;
 
-			self.log('Get CDRs');
+			self.log('Getting CDRs');
 
 			self.callApi({
 				resource: 'cdrs.list',
@@ -148,9 +148,8 @@ define(function(require) {
 					accountId: self.accountId
 				},
 				success: function(data, status) {
-					self.log('CDRs data:');
-					self.log(data);
 					var cdrs = data.data;
+					self.log(cdrs);
 
 					if(typeof(callback) === 'function') {
 						callback(cdrs);
@@ -158,7 +157,7 @@ define(function(require) {
 				},
 				error: function(data, status) {
 					//_callback({}, uiRestrictions);
-					self.log('get cdrs error data');
+					self.log('Error while getting cdrs');
 					self.log(data);
 				}
 			});
@@ -309,65 +308,154 @@ define(function(require) {
 			return CDRsWithFilesArr;
 		},
 
-		_renderRecordingsTable: function(cdrs){
-			var self = this,
-				uniqueCallerIdNames = new Set(),
-				minDuration = 0,
-				maxDuration = 0,
-				duration;
-
+		_renderRecordingsTable: function(cdrs) {
+			var self = this;
 			var CDRsWithFilesArr = self._extractCDRsWithFiles(cdrs, self.vars.filesList);
-
-			for(var i=0, len=CDRsWithFilesArr.length; i<len; i++) {
-				uniqueCallerIdNames.add(CDRsWithFilesArr[i]['caller_id_name']);
-				duration = parseInt(CDRsWithFilesArr[i].duration_seconds);
-
-				// format direction
-				if(CDRsWithFilesArr[i]['direction'] === 'outbound') {
-					CDRsWithFilesArr[i]['direction_formatted'] = 'OUT';
-				} else if(CDRsWithFilesArr[i]['direction'] === 'inbound') {
-					CDRsWithFilesArr[i]['direction_formatted'] = 'IN';
-				} else {
-					CDRsWithFilesArr[i]['direction_formatted'] = CDRsWithFilesArr[i]['direction'];
-				}
-
-				if(!maxDuration || duration > maxDuration) {
-					maxDuration = duration;
-				}
-
-				if(!minDuration || duration < minDuration) {
-					minDuration = duration;
-				}
-			}
 
 			self.log('CDRs with Files:');
 			self.log(CDRsWithFilesArr);
 
-			self.log('Unique Caller Id Names:');
-			self.log(uniqueCallerIdNames);
+			self._extendCDRs(CDRsWithFilesArr, function(cdrs) {
+				var uniqueUsersNames = new Set(),
+					uniqueDevicesNames = new Set(),
+					minDuration = 0,
+					maxDuration = 0,
+					duration;
 
-			self.vars.minDuration = minDuration;
-			self.vars.maxDuration = maxDuration;
+				for(var i=0, len=cdrs.length; i<len; i++) {
+					uniqueDevicesNames.add(cdrs[i]['device_name']);
+					uniqueUsersNames.add(cdrs[i]['owner_name']);
+					duration = parseInt(cdrs[i].duration_seconds);
 
-			var minDurationHHMMSS = new Date(1000 * minDuration).toISOString().substr(11, 8);
-			var maxDurationHHMMSS = new Date(1000 * maxDuration).toISOString().substr(11, 8);
+					// format direction
+					if(cdrs[i]['direction'] === 'outbound') {
+						cdrs[i]['direction_formatted'] = 'OUT';
+					} else if(cdrs[i]['direction'] === 'inbound') {
+						cdrs[i]['direction_formatted'] = 'IN';
+					} else {
+						cdrs[i]['direction_formatted'] = cdrs[i]['direction'];
+					}
 
-			var template = $(monster.template(self, 'recordings-table', {
-				'recordings': CDRsWithFilesArr,
-				'callerIdNames': Array.from(uniqueCallerIdNames),
-				'duration': {
-					'min': minDuration,
-					'minHHMMSS': minDurationHHMMSS,
-					'max': maxDuration,
-					'maxHHMMSS': maxDurationHHMMSS
+					if(!maxDuration || duration > maxDuration) {
+						maxDuration = duration;
+					}
+
+					if(!minDuration || duration < minDuration) {
+						minDuration = duration;
+					}
 				}
-			}));
 
-			self.log(template);
+				self.log('Unique Users Names:');
+				self.log(uniqueUsersNames);
 
-			self.vars.$appContainer.find('#recordings-list-container').html(template);
+				self.log('Unique Devices Names:');
+				self.log(uniqueDevicesNames);
 
-			self._initRecordingsTableBehavior();
+				self.vars.minDuration = minDuration;
+				self.vars.maxDuration = maxDuration;
+
+				var minDurationHHMMSS = new Date(1000 * minDuration).toISOString().substr(11, 8);
+				var maxDurationHHMMSS = new Date(1000 * maxDuration).toISOString().substr(11, 8);
+
+				var template = $(monster.template(self, 'recordings-table', {
+					'recordings': cdrs,
+					'usersNames': Array.from(uniqueUsersNames),
+					'devicesNames': Array.from(uniqueDevicesNames),
+					'duration': {
+						'min': minDuration,
+						'minHHMMSS': minDurationHHMMSS,
+						'max': maxDuration,
+						'maxHHMMSS': maxDurationHHMMSS
+					}
+				}));
+
+				self.log(template);
+
+				self.vars.$appContainer.find('#recordings-list-container').html(template);
+
+				self._initRecordingsTableBehavior();
+			});
+		},
+
+		_extendCDRs: function(cdrs, callback) {
+			var self = this;
+			self.log('Extending the CDRs');
+			self._getDevices(function(devices){
+				for(var ri=0, rlen=cdrs.length; ri<rlen; ri++) {
+					for(var di=0, dlen=devices.length; di<dlen; di++) {
+						if(devices[di].id === cdrs[ri].authorizing_id) {
+							cdrs[ri].device_name = devices[di].name;
+							break;
+						}
+					}
+				}
+
+				self._getUsers(function(users){
+					var owner_name = '';
+					for(var cdrsI=0, cdrsLen=cdrs.length; cdrsI<cdrsLen; cdrsI++) {
+						for(var ui=0, ulen=users.length; ui<ulen; ui++) {
+							if(users[ui].id === cdrs[cdrsI].owner_id) {
+								cdrs[cdrsI].owner_name =
+									[users[ui].first_name, users[ui].last_name].join(' ');
+								break;
+							}
+						}
+					}
+
+					if(typeof(callback) === 'function') {
+						self.log(cdrs);
+						callback(cdrs);
+					}
+				});
+			});
+		},
+
+		_getDevices: function(callback) {
+			var self = this;
+			self.log('Getting Devices');
+
+			self.callApi({
+				resource: 'device.list',
+				data: {
+					accountId: self.accountId
+				},
+				success: function(data, status) {
+					var devices = data.data;
+					self.log(devices);
+
+					if(typeof(callback) === 'function') {
+						callback(devices);
+					}
+				},
+				error: function(data, status) {
+					self.log('Error while getting devices');
+					self.log(data);
+				}
+			});
+		},
+
+		_getUsers: function(callback) {
+			var self = this;
+			self.log('Getting Users');
+
+			self.callApi({
+				resource: 'user.list',
+				data: {
+					accountId: self.accountId
+				},
+				success: function(data, status) {
+					var users = data.data;
+					self.log(users);
+
+					if(typeof(callback) === 'function') {
+						callback(users);
+					}
+				},
+				error: function(data, status) {
+					self.log('Error while getting users');
+					self.log(data);
+				}
+			});
 		},
 
 		_initSettingsButtonBehavior: function() {
@@ -503,14 +591,25 @@ define(function(require) {
 			});
 		},
 
-		_initCallerIdNameFilter: function(table) {
-			var $select = $('#caller-id-name'),
+		_initUserNameFilter: function(table) {
+			var $select = $('#user-name-select'),
 				self = this;
 			$select.chosen();
 
 			$select.on('change', function() {
 				table.draw();
-				self.log('Caller Id Name redraw');
+				self.log('User name redraw');
+			});
+		},
+
+		_initDeviceNameFilter: function(table) {
+			var $select = $('#device-name-select'),
+				self = this;
+			$select.chosen();
+
+			$select.on('change', function() {
+				table.draw();
+				self.log('Device Name redraw');
 			});
 		},
 
@@ -631,7 +730,8 @@ define(function(require) {
 
 			self._initDateTimeFilter(table);
 			self._initDirectionFilter(table);
-			//self._initCallerIdNameFilter(table);
+			self._initUserNameFilter(table);
+			self._initDeviceNameFilter(table);
 			self._initDurationFilter(table);
 			self._initResetFiltersBtn(table);
 
@@ -698,22 +798,35 @@ define(function(require) {
 				return (direction === 'all' || direction === evalDirection);
 			});
 
-			// caller id name filter
-			/*window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-				var namesArr = $("#caller-id-name").val();
-				var evalName = data[2];
+			// user name filter
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var namesArr = $("#user-name-select").val();
+				var evalName = data[3];
 				if(!namesArr || typeof(namesArr) === 'undefined' || !evalName) {
 					return true;
 				}
-
 				for(var n=0, len=namesArr.length; n<len; n++) {
 					if(evalName === namesArr[n]) {
 						return true;
 					}
 				}
-
 				return false;
-			});*/
+			});
+
+			// device name filter
+			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+				var namesArr = $("#device-name-select").val();
+				var evalName = data[4];
+				if(!namesArr || typeof(namesArr) === 'undefined' || !evalName) {
+					return true;
+				}
+				for(var n=0, len=namesArr.length; n<len; n++) {
+					if(evalName === namesArr[n]) {
+						return true;
+					}
+				}
+				return false;
+			});
 
 			// duration filter
 			window.jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
