@@ -60,7 +60,7 @@
 	</div>
 
 </div>
-<table id="recordings-list">
+<table id="recordings-list" class="recordings-table">
 	<thead>
 		<tr>
 			<th>№</th>
@@ -70,7 +70,7 @@
 			<th>{{i18n.recordings.recordingsTable.columnHeader.device}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.dialerNumber}}</th>
 			<th>{{i18n.recordings.recordingsTable.columnHeader.duration}}</th>
-			<th class="no-sort">
+			<th class="recordings-table__actions-col no-sort">
 				{{i18n.recordings.recordingsTable.columnHeader.actions}}
 			</th>
 		</tr>
@@ -85,10 +85,8 @@
 			<td>{{device_name}}</td>
 			<td>{{dialed_number}}</td>
 			<td>{{duration_seconds}}</td>
-			<td>
-				<div class="btn-wrapper">
-					<a class="js-play-audio play-btn" data-filename="{{recording_file_name}}" href=""></a>
-				</div>
+			<td class="recordings-table__actions-col">
+				<audio class="js-record-audio" controls="controls" data-filename="{{recording_file_name}}"></audio>
 			</td>
 		</tr>
 	{{/each}}

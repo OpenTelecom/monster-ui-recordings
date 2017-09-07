@@ -132,7 +132,7 @@ input[type="text"] {
 }
 
 #recordings_wrapper table td audio {
-	width: 100px;
+	width: 320px;
 }
 
 #recordings_wrapper table td .btn-wrapper {
@@ -142,6 +142,10 @@ input[type="text"] {
 
 .recordings-wrapper select#direction {
 	width: auto;
+}
+
+.recordings-table__actions-col {
+	width: 325px;
 }
 
 .play-btn {

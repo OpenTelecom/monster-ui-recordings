@@ -687,7 +687,7 @@ define(function(require) {
 		_initRecordingsTableBehavior: function() {
 			var self = this;
 
-			self._initAudioButtons();
+			self._initAudioPlayers();
 			self._initDateTimePickers();
 			self._initDataTablesFilters();
 
@@ -841,28 +841,14 @@ define(function(require) {
 			});
 		},
 
-		_initAudioButtons: function() {
-			$('.js-play-audio').not('.js-handled').click(function(e) {
-				e.preventDefault();
-				var $btn = $(this);
-				var $btnContainer = $btn.parent();
-
-				RemoteStorage.getRecordFileUrl($btn.data('filename'), function(url){
-					$btnContainer.html(
-						'<audio controls="controls" preload="auto" autoplay="autoplay">' +
-						'<source src="' + url + '" type="audio/mpeg">' +
-						'</audio>'
-					);
+		_initAudioPlayers: function() {
+			$('.js-record-audio').not('.js-handled').each(function(i, el) {
+				var $audioEl = $(this);
+				RemoteStorage.getRecordFileUrl($audioEl.data('filename'), function(url) {
+					$audioEl.html('<source src="' + url + '" type="audio/mpeg">');
+					$audioEl.addClass('js-handled');
 				});
-			}).addClass('js-handled');
-
-/*			$('.js-download-audio').not('.js-handled').click(function(e) {
-				var $btn = $(this);
-
-				RemoteStorage.getRecordFileUrl($btn.attr('download'), function(url) {
-					$btn.attr('href', url);
-				});
-			}).addClass('js-handled');*/
+			});
 		},
 
 		_initHandlebarsHelpers: function() {
