@@ -6,14 +6,13 @@
 		"recordingsTable": {
 			"title": "Recordings",
 			"columnHeader": {
-				"direction": "Direction",
-				"callerIdName": "Caller ID Name",
+				"direction": "IN/OUT",
 				"datetime": "Datetime",
+				"user": "User",
+				"device": "Device",
 				"dialerNumber": "Dialer Number",
-				"duration": "Duration (sec)",
-				"from": "From",
-				"play": "Play",
-				"download": "Download"
+				"duration": "Duration",
+				"actions": "Actions"
 			},
 			"playBtnText": "Play",
 			"downloadBtnText": "Download"
@@ -29,12 +28,15 @@
 				"lastHour": "last hour"
 			},
 			"direction": {
-				"all": "All directions",
-				"outbound": "Outbound",
-				"inbound": "inbound"
+				"all": "IN/OUT",
+				"outbound": "OUT",
+				"inbound": "IN"
 			},
-			"callerIdName": {
-				"placeholder": "Choose a caller name..."
+			"userName": {
+				"placeholder": "Choose a user name..."
+			},
+			"deviceName": {
+				"placeholder": "Choose a device name..."
 			},
 			"duration": {
 				"title": "Duration:",
@@ -44,6 +46,31 @@
 				"text": "Reset filters"
 			}
 			
+		},
+		"storageManager": {
+			"title": "Storage settings",
+			"newStorageBtnText": "New storage",
+			"itemSettings": {
+				"nameLabel": "Storage name",
+				"bucketLabel": "Bucket name",
+				"keyLabel": "Key",
+				"secretLabel": "Secret",
+				"saveBtnText": "Save Changes",
+				"cancelBtnText": "Cancel",
+				"successUpdate": "Your Storage Settings were successfully updated!",
+				"setDefaultLabel": "Set default"
+			},
+			"newItem": {
+				"saveNewItemText": "Create",
+				"cancelBtnText": "Cancel"
+			},
+			"confirmDelete": "Yes, Remove Storage",
+			"confirmDeleteText": "This will remove this Storage from this account.",
+			"confirmDeleteTitle": "Warning! Are you sure?",
+			"successRemovingMessage": "You successfully removed the storage.",
+			"successSavingMessage": "You successfully saved the storage.",
+			"successUpdate": "Your Storage Settings were successfully updated!",
+			"alreadyActiveMessage": "This storage is already active"
 		}
 	}
 }
